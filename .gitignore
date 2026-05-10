@@ -1,0 +1,27 @@
+# Flutter / Dart
+la-le-me-app/.dart_tool/
+la-le-me-app/build/
+la-le-me-app/.flutter-plugins
+la-le-me-app/.flutter-plugins-dependencies
+la-le-me-app/.packages
+la-le-me-app/.pub-cache/
+la-le-me-app/.pub/
+la-le-me-app/pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Trae IDE
+.trae/
+
+# Misc
+*.log
+nul

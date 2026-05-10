@@ -1,0 +1,218 @@
+import 'package:flutter/material.dart';
+import '../models/profile_model.dart';
+import '../services/database_service.dart';
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final _nicknameController = TextEditingController();
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
+  final _waistController = TextEditingController();
+  Gender _selectedGender = Gender.unknown;
+  int? _selectedBirthYear;
+  JobType _selectedJobType = JobType.other;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final profile = await DatabaseService.getProfile();
+    if (mounted) {
+      setState(() {
+        _nicknameController.text = profile.nickname ?? '';
+        _selectedGender = profile.gender ?? Gender.unknown;
+        _selectedBirthYear = profile.birthYear;
+        _heightController.text = profile.heightCm?.toString() ?? '';
+        _weightController.text = profile.weightKg?.toString() ?? '';
+        _waistController.text = profile.waistCm?.toString() ?? '';
+        _selectedJobType = profile.jobType ?? JobType.other;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final genderLabels = ['未知', '男', '女', '其他'];
+    final jobLabels = ['久坐办公', '站立为主', '体力劳动', '混合', '其他'];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('个人档案'),
+        actions: [
+          TextButton(
+            onPressed: _save,
+            child: const Text('保存', style: TextStyle(fontSize: 16)),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 48,
+                    backgroundColor: const Color(0xFFD4A574),
+                    child: const Icon(Icons.person, size: 48, color: Colors.white),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF795548),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _nicknameController,
+              decoration: const InputDecoration(
+                labelText: '昵称',
+                hintText: '给自己取个名字吧',
+                border: OutlineInputBorder(),
+              ),
+              maxLength: 16,
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<Gender>(
+              initialValue: _selectedGender,
+              decoration: const InputDecoration(
+                labelText: '性别',
+                border: OutlineInputBorder(),
+              ),
+              items: Gender.values.map((g) => DropdownMenuItem(
+                value: g,
+                child: Text(genderLabels[g.index]),
+              )).toList(),
+              onChanged: (v) => setState(() => _selectedGender = v ?? Gender.unknown),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<int>(
+              initialValue: _selectedBirthYear,
+              decoration: const InputDecoration(
+                labelText: '出生年份',
+                border: OutlineInputBorder(),
+              ),
+              items: List.generate(80, (i) => DateTime.now().year - 18 - i)
+                  .map((y) => DropdownMenuItem(value: y, child: Text('$y年')))
+                  .toList(),
+              onChanged: (v) => setState(() => _selectedBirthYear = v),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _heightController,
+                    decoration: const InputDecoration(
+                      labelText: '身高 (cm)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _weightController,
+                    decoration: const InputDecoration(
+                      labelText: '体重 (kg)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _waistController,
+              decoration: const InputDecoration(
+                labelText: '腰围 (cm)（选填）',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<JobType>(
+              initialValue: _selectedJobType,
+              decoration: const InputDecoration(
+                labelText: '职业类型',
+                border: OutlineInputBorder(),
+              ),
+              items: JobType.values.map((j) => DropdownMenuItem(
+                value: j,
+                child: Text(jobLabels[j.index]),
+              )).toList(),
+              onChanged: (v) => setState(() => _selectedJobType = v ?? JobType.other),
+            ),
+            const SizedBox(height: 24),
+            const Card(
+              color: Color(0xFFFFF8E1),
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(Icons.security, size: 16, color: Color(0xFFF57C00)),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '三围数据仅存储在本地，不会上传到服务器',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF795548)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _save() async {
+    final profile = ProfileModel(
+      nickname: _nicknameController.text.isEmpty ? null : _nicknameController.text,
+      gender: _selectedGender,
+      birthYear: _selectedBirthYear,
+      heightCm: double.tryParse(_heightController.text),
+      weightKg: double.tryParse(_weightController.text),
+      waistCm: double.tryParse(_waistController.text),
+      jobType: _selectedJobType,
+    );
+
+    await DatabaseService.saveProfile(profile);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('档案已保存 ✅')),
+      );
+      Navigator.pop(context);
+    }
+  }
+}
