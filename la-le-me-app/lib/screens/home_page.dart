@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../models/toilet_record.dart';
 import '../services/database_service.dart';
 import '../services/score_calculator.dart';
@@ -339,6 +340,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                       _buildWeekOverview(statsAsync, totalCount),
                       const SizedBox(height: 16),
                       _buildDailyTip(statsAsync, bigCount, lastBigHours),
+                      const SizedBox(height: 16),
+                      _buildFiveDayChart(),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -541,6 +544,191 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFiveDayChart() {
+    final statsAsync = ref.watch(fiveDayStatsProvider);
+
+    return statsAsync.when(
+      loading: () => const SizedBox(height: 0),
+      error: (e, st) => const SizedBox(height: 0),
+      data: (stats) {
+        final bigCounts = stats.bigCounts;
+        final totalCounts = stats.totalCounts;
+        final maxY = (totalCounts.reduce((a, b) => a > b ? a : b) + 1).toDouble().clamp(3.0, double.infinity);
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: const Color(0xFFF7F7F7),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Text('📈', style: TextStyle(fontSize: 14)),
+                  SizedBox(width: 6),
+                  Text(
+                    '近5天出库趋势',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  _legendDot(const Color(0xFFD4A574)),
+                  const SizedBox(width: 4),
+                  const Text('大号', style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                  const SizedBox(width: 12),
+                  _legendDot(const Color(0xFF90CAF9)),
+                  const SizedBox(width: 4),
+                  const Text('总计', style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 180,
+                child: LineChart(
+                  LineChartData(
+                    minX: 0,
+                    maxX: 4,
+                    minY: 0,
+                    maxY: maxY,
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      horizontalInterval: 1,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: Colors.grey.withValues(alpha: 0.15),
+                        strokeWidth: 1,
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            final idx = value.toInt();
+                            if (idx < 0 || idx >= stats.dates.length) return const SizedBox.shrink();
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Text(
+                                stats.dates[idx],
+                                style: const TextStyle(fontSize: 10, color: Color(0xFF999999)),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 24,
+                          interval: 1,
+                          getTitlesWidget: (value, meta) {
+                            if (value == value.roundToDouble() && value >= 0) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(fontSize: 10, color: Color(0xFF999999)),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ),
+                    ),
+                    borderData: FlBorderData(show: false),
+                    lineTouchData: LineTouchData(
+                      touchTooltipData: LineTouchTooltipData(
+                        getTooltipItems: (touchedSpots) {
+                          return touchedSpots.map((spot) {
+                            final label = spot.barIndex == 0 ? '大号' : '总计';
+                            return LineTooltipItem(
+                              '$label: ${spot.y.toInt()}次',
+                              TextStyle(
+                                color: spot.barIndex == 0
+                                    ? const Color(0xFFD4A574)
+                                    : const Color(0xFF90CAF9),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            );
+                          }).toList();
+                        },
+                      ),
+                    ),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: List.generate(5, (i) => FlSpot(i.toDouble(), bigCounts[i].toDouble())),
+                        isCurved: true,
+                        curveSmoothness: 0.3,
+                        color: const Color(0xFFD4A574),
+                        barWidth: 2.5,
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, xPercentage, bar, index) =>
+                              FlDotCirclePainter(
+                            radius: 4,
+                            color: const Color(0xFFD4A574),
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          ),
+                        ),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: const Color(0xFFD4A574).withValues(alpha: 0.1),
+                        ),
+                      ),
+                      LineChartBarData(
+                        spots: List.generate(5, (i) => FlSpot(i.toDouble(), totalCounts[i].toDouble())),
+                        isCurved: true,
+                        curveSmoothness: 0.3,
+                        color: const Color(0xFF90CAF9),
+                        barWidth: 2.5,
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, xPercentage, bar, index) =>
+                              FlDotCirclePainter(
+                            radius: 4,
+                            color: const Color(0xFF90CAF9),
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          ),
+                        ),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: const Color(0xFF90CAF9).withValues(alpha: 0.08),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _legendDot(Color color) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
       ),
     );
   }

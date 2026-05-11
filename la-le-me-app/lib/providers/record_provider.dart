@@ -20,6 +20,49 @@ final yearRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
   return await DatabaseService.getRecentRecords(days: 365);
 });
 
+class FiveDayStats {
+  final List<String> dates;
+  final List<int> bigCounts;
+  final List<int> totalCounts;
+
+  FiveDayStats({
+    required this.dates,
+    required this.bigCounts,
+    required this.totalCounts,
+  });
+}
+
+final fiveDayStatsProvider = FutureProvider<FiveDayStats>((ref) async {
+  final records = await DatabaseService.getRecentRecords(days: 5);
+  final now = DateTime.now();
+
+  List<String> dates = [];
+  List<int> bigCounts = [];
+  List<int> totalCounts = [];
+
+  for (int i = 4; i >= 0; i--) {
+    final day = now.subtract(Duration(days: i));
+    final dayKey = '${day.year}${day.month.toString().padLeft(2, '0')}${day.day.toString().padLeft(2, '0')}';
+    final monthDay = '${day.month}/${day.day}';
+
+    final dayRecords = records.where((r) {
+      final dt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
+      final rKey = '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
+      return rKey == dayKey;
+    }).toList();
+
+    dates.add(monthDay);
+    bigCounts.add(dayRecords.where((r) => r.type == RecordType.big).length);
+    totalCounts.add(dayRecords.length);
+  }
+
+  return FiveDayStats(
+    dates: dates,
+    bigCounts: bigCounts,
+    totalCounts: totalCounts,
+  );
+});
+
 final todayBigCountProvider = FutureProvider<int>((ref) async {
   return await DatabaseService.getTodayBigCount();
 });
