@@ -22,6 +22,16 @@ Thumbs.db
 # Trae IDE
 .trae/
 
+# Android signing
+la-le-me-app/android/key.properties
+la-le-me-app/android/app/*.keystore
+
+# Android SDK (build tools, not project source)
+android-sdk/
+
+# Build outputs
+dist/
+
 # Misc
 *.log
 nul
