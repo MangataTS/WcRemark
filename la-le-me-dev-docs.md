@@ -1,9 +1,9 @@
 # 「拉了么」全栈开发文档 & 功能设计说明书
 
-**版本**：v1.0 详细版  
-**日期**：2026-05-10  
+**版本**：v1.0.0（已构建 APK）  
+**日期**：2026-05-11  
 **定位**：隐私优先的生理健康记录与轻社交排名应用  
-**文档状态**：可直接用于开发实施
+**文档状态**：与代码同步，可直接用于开发实施
 
 ---
 
@@ -37,11 +37,11 @@
 
 | 层级 | 技术选型 | 说明 |
 |------|---------|------|
-| 客户端 | Flutter 3.19+ | 跨平台，一套代码覆盖 iOS/Android |
-| 客户端数据库 | sqflite (SQLite) | 本地主存储，支持加密 |
-| 客户端状态管理 | Riverpod 2.x | 响应式，支持异步状态 |
+| 客户端 | Flutter 3.38.5 (SDK >=3.3.0) | 跨平台，一套代码覆盖 iOS/Android |
+| 客户端数据库 | sqflite 2.4 (SQLite) | 本地主存储，支持加密 |
+| 客户端状态管理 | Riverpod 2.6 | 响应式，支持异步状态 |
 | 客户端图表 | fl_chart | Flutter 原生图表库 |
-| 服务端 | Go 1.22+ | 高并发、低延迟、编译型 |
+| 服务端 | Go 1.23 (工具链 1.24) | 高并发、低延迟、编译型 |
 | 服务端框架 | Gin v1.9+ | 轻量高性能 Web 框架 |
 | ORM | GORM v2 | 支持 PostgreSQL 特性 |
 | 主数据库 | PostgreSQL 15 | 支持 JSONB、窗口函数 |
@@ -3205,7 +3205,13 @@ spec:
 
 ## 十四、开发进度记录
 
-### 2026-05-10 开发进度更新
+### 2026-05-11 开发进度更新
+
+#### 里程碑
+- ✅ **Release APK 构建成功** (59MB, kaptree 正式签名)
+- ✅ **GitHub 代码同步** (https://github.com/MangataTS/WcRemark)
+- ✅ **Android 签名配置** — RSA 2048-bit, 有效期 10000 天
+- ✅ **Flutter SDK 3.38.5 环境就绪**
 
 #### 后端 (Go/Gin) — ✅ 已完成基础架构
 
@@ -3262,12 +3268,26 @@ spec:
 | `lib/models/season.dart` | 赛季管理与历史模型 |
 | `lib/models/achievement.dart` | 成就定义与查询 |
 | `lib/models/score.dart` | 积分乘数与结算结果模型 |
+| `lib/providers/record_provider.dart` | 记录状态管理 (Riverpod) |
+| `lib/providers/ranking_provider.dart` | 排行榜状态管理 (Riverpod) |
 | `lib/services/database_service.dart` | SQLite 数据库服务（CRUD、查询、同步标记） |
+| `lib/services/database_factory_io.dart` | 数据库工厂 IO 实现 |
+| `lib/services/database_factory_stub.dart` | 数据库工厂 Stub |
+| `lib/services/database_factory_web.dart` | 数据库工厂 Web 实现 |
 | `lib/services/api_service.dart` | REST API 客户端（Dio + JWT 认证） |
+| `lib/services/api_config.dart` | 环境变量配置管理 |
 | `lib/services/score_calculator.dart` | 客户端积分计算引擎（R/H/T/P/S/M 六维乘数） |
 | `lib/services/regularity_calculator.dart` | 规律指数、健康等级、年度关键词算法 |
 | `lib/services/ai_service.dart` | AI 肠道顾问服务（多厂商大模型接入） |
+| `lib/services/anomaly_detector.dart` | 异常预警检测（便秘/腹泻/血便） |
+| `lib/services/anti_cheat_service.dart` | 客户端反作弊预检 |
+| `lib/services/achievement_service.dart` | 成就自动检测与解锁 |
+| `lib/services/season_service.dart` | 赛季切换与重置 |
+| `lib/services/backup_encryption.dart` | AES-256-GCM 加密/解密 |
+| `lib/services/notification_service.dart` | 8 种本地通知类型 |
 | `lib/services/settings_service.dart` | 应用偏好设置持久化 |
+| `lib/services/theme_service.dart` | Light/Dark/OLED 主题切换 |
+| `lib/screens/main_shell.dart` | 底部 4 Tab 主壳 |
 | `lib/screens/home_page.dart` | 首页（问候语、核心卡片、快速记录） |
 | `lib/screens/stats_page.dart` | 统计入口页 |
 | `lib/screens/stats_pages.dart` | 周/月/年统计页面 |
@@ -3292,30 +3312,51 @@ spec:
 | 健康等级评定 | ✅ regularity_calculator.dart | - | 完整实现 |
 | 布里斯托分型映射 | ✅ score_calculator.dart | ✅ anti_cheat_service.go | 完整实现 |
 | 段位系统 | ✅ ranking.dart | ✅ score_service.go | 完整实现 |
-| 反作弊检测 | ✅ (设计文档) | ✅ anti_cheat_service.go | 服务端完整 |
+| 反作弊检测 | ✅ anti_cheat_service.dart | ✅ anti_cheat_service.go | 完整实现 |
 | AI 数据脱敏聚合 | ✅ ai_service.dart | - | 完整实现 |
 | 年度关键词生成 | ✅ regularity_calculator.dart | - | 完整实现 |
+| 状态管理 (Riverpod) | ✅ providers/ | - | 完整实现 |
+| 通知/提醒系统 | ✅ notification_service.dart | - | 完整实现 |
+| 备份加密/恢复 | ✅ backup_encryption.dart | ✅ backup_service.go | 完整实现 |
+| 主题切换 | ✅ theme_service.dart | - | 完整实现 |
+| 成就系统 | ✅ achievement_service.dart | ✅ score_service.go | 完整实现 |
+| 赛季管理 | ✅ season_service.dart | ✅ score_service.go | 完整实现 |
+
+#### APK 构建信息
+
+| 项目 | 值 |
+|------|------|
+| 输出文件 | `dist/la-le-me-app-release.apk` |
+| 文件大小 | 59 MB |
+| 应用 ID | `com.example.la_le_me_app` |
+| 版本号 | 1.0.0+1 |
+| 签名证书 | CN=kaptree, RSA 2048-bit, SHA256withRSA |
+| 签名方案 | APK Signature Scheme v2 |
 
 #### 待开发功能
 
 | 功能 | 优先级 | 说明 |
 |------|--------|------|
-| 状态管理 (Provider/Riverpod) | 高 | 需要全局状态管理连接 UI 与数据 |
-| 本地通知/提醒 | 中 | 晨间提醒、久坐提醒、异常预警 |
-| 生物识别解锁 | 中 | Face ID / 指纹解锁 |
-| 备份加密/恢复 | 中 | AES-256-GCM 加密备份 |
-| 集成测试 | 高 | 关键流程端到端测试 |
-| UI 细化与主题 | 中 | 深色模式、OLED 模式 |
-| 应用图标与启动页 | 低 | 品牌视觉资产 |
+| 头像选择与裁剪 | 低 | 品牌视觉资产 |
+| 同城排行榜完整实现 | 中 | 需补充城市定位逻辑 |
+| 好友排行榜 | 中 | 需补充好友关系管理 |
+| 趣味排行榜 | 低 | 6 种趣味维度排行 |
+| 云端数据同步 | 中 | 需要服务端配合 |
+| 推送通知集成 (Firebase/APNs) | 中 | 需要配置 Firebase 项目 |
+| iOS 真机构建与上架 | 中 | 需要 Apple Developer 账号 |
+| E2E 测试覆盖 | 高 | 关键流程端到端测试 |
 | CI/CD 流水线 | 中 | 自动化构建与发布 |
 
-#### 已知问题与解决方案
+#### 已解决问题
 
 | 问题 | 状态 | 解决方案 |
 |------|------|---------|
 | `getCurrentSeasonStr` 不可见 | ✅ 已修复 | 改为导出函数 `GetCurrentSeason()` |
 | Claims 结构体位置冲突 | ✅ 已修复 | 统一使用 `util.Claims` |
-| Flutter SDK 未安装 | ⚳ 待处理 | 需安装 Flutter SDK 以运行 `flutter pub get` |
-| intl 日期格式化需本地化数据 | ⚶ 待处理 | 需添加 `flutter_localizations` 依赖 |
+| Flutter SDK 未安装 | ✅ 已解决 | 安装 Flutter 3.38.5 (Homebrew) |
+| Java JDK 未安装 | ✅ 已解决 | 安装 OpenJDK 17 (Homebrew) |
+| Android SDK 未配置 | ✅ 已解决 | 手动安装 cmdline-tools + platforms/build-tools |
+| `intl` 依赖本地化问题 | ✅ 已解决 | `flutter pub get` 正常解析 |
+| GitHub 推送大文件被拒 | ✅ 已解决 | `.gitignore` 排除 `android-sdk/` 和 `dist/` |
 
 *文档结束 — 由「拉了么」产品团队编制*

@@ -67,8 +67,9 @@ WcRemark/
 
 | 工具 | 版本 |
 |------|------|
-| Flutter | >= 3.3.0 |
-| Go | >= 1.21 |
+| Flutter | 3.38.5 |
+| Go | 1.23 |
+| Java | JDK 17 |
 | PostgreSQL | >= 15 |
 | Redis | >= 7 |
 | Docker | 可选 |
@@ -98,23 +99,32 @@ go run cmd/server/main.go
 ```bash
 cd la-le-me-app
 
+# 配置 Android 本地属性（首次构建需要）
+echo "sdk.dir=<你的Android SDK路径>" > android/local.properties
+echo "flutter.sdk=<你的Flutter SDK路径>" >> android/local.properties
+
 # 安装依赖
 flutter pub get
 
+# 构建 Release APK
+flutter build apk --release
+
+# 输出路径: build/app/outputs/flutter-apk/app-release.apk
+
+# 开发调试
+flutter run
+
 # Web 模式运行
 flutter run -d chrome
-
-# Android 模式运行
-flutter run -d android
-
-# iOS 模式运行
-flutter run -d ios
-
-# Windows 桌面模式运行
-flutter run -d windows
 ```
 
-### 3. 配置 API 环境
+### 3. Android 签名配置
+
+项目已配置 `kaptree` 正式签名。密钥库路径：
+- `android/app/kaptree.keystore`
+- `android/key.properties`（凭据文件，已加入 `.gitignore`）
+
+### 4. 配置 API 环境
 
 客户端通过环境变量 `ENV` 切换后端地址：
 
@@ -211,21 +221,21 @@ flutter build apk --dart-define=ENV=prod
 
 | 技术 | 版本 | 用途 |
 |------|------|------|
-| Flutter | 3.3+ | 跨平台 UI 框架 |
-| Riverpod | 2.5 | 响应式状态管理 |
-| sqflite | 2.3 | 本地 SQLite 数据库 |
-| Dio | 5.4 | HTTP 网络请求 |
+| Flutter | 3.38.5 (SDK >=3.3.0) | 跨平台 UI 框架 |
+| Riverpod | 2.6 | 响应式状态管理 |
+| sqflite | 2.4 | 本地 SQLite 数据库 |
+| Dio | 5.9 | HTTP 网络请求 |
 | fl_chart | 0.67 | 原生图表渲染 |
 | crypto / pointycastle | 3.x | AES-256-GCM 加密 |
-| local_auth | 2.2 | 生物识别 (指纹/面容) |
+| local_auth | 2.3 | 生物识别 (指纹/面容) |
 | flutter_secure_storage | 9.2 | 安全 Key-Value 存储 |
-| WebSocket | 3.0 | 实时排名推送 |
+| web_socket_channel | 3.0 | 实时排名推送 |
 
 ### 服务端
 
 | 技术 | 版本 | 用途 |
 |------|------|------|
-| Go | 1.21+ | 后端语言 |
+| Go | 1.23 (工具链 1.24) | 后端语言 |
 | Gin | 1.9 | HTTP 框架 |
 | GORM | 1.25 | ORM (PostgreSQL) |
 | PostgreSQL | 15 | 主数据库 |
@@ -282,6 +292,14 @@ cd la-le-me-backend && go test ./...
 - [ ] 云端数据同步
 - [ ] 推送通知集成 (Firebase/APNs)
 - [ ] E2E 测试覆盖
+- [ ] iOS 真机构建与上架
+
+---
+## 📊 项目状态
+
+| 版本 | 日期 | 状态 |
+|------|------|------|
+| v1.0.0 | 2026-05-11 | ✅ Release APK 已构建 (kaptree 签名)，已同步到 [GitHub](https://github.com/MangataTS/WcRemark) |
 
 ---
 
