@@ -126,7 +126,9 @@ flutter run -d chrome
 
 ### 4. 配置 API 环境
 
-客户端通过环境变量 `ENV` 切换后端地址：
+客户端支持两种方式配置后端服务器：
+
+**方式一：编译时环境变量（默认）**
 
 | ENV | 地址 |
 |-----|------|
@@ -134,12 +136,19 @@ flutter run -d chrome
 | `staging` | `https://staging-api.laleme.app` |
 | `prod` | `https://api.laleme.app` |
 
-```bash
-# Web 开发
-flutter run -d chrome --dart-define=ENV=dev
+**方式二：应用内动态配置（推荐）**
 
-# 生产构建
+在 设置 → 服务器配置 中手动填写服务器地址，支持：
+- 🩺 **健康检查**：`GET /health` 实时检测服务器状态
+- 🔗 **连接测试**：验证服务器可达性
+- 💾 **持久化保存**：地址保存到本地数据库
+
+```bash
+# 方式一：编译时指定
+flutter run -d chrome --dart-define=ENV=dev
 flutter build apk --dart-define=ENV=prod
+
+# 方式二：应用内动态配置（无需重新编译）
 ```
 
 ---
@@ -153,7 +162,7 @@ flutter build apk --dart-define=ENV=prod
 | **首页** | 🏠 | [home_page.dart](la-le-me-app/lib/screens/home_page.dart) | 查看今日出库次数、快速记录(大号/小号)、周报摘要、每日健康提示 |
 | **数据** | 📊 | [stats_page.dart](la-le-me-app/lib/screens/stats_page.dart) | 周报详情、月报(日历热力图+健康等级+布里斯托分布)、年报(月度趋势+关键词) |
 | **排行** | 🏆 | [ranking_page.dart](la-le-me-app/lib/screens/ranking_page.dart) | 全球榜/同城榜/好友榜 TabBar 切换 |
-| **设置** | ⚙️ | [settings_page.dart](la-le-me-app/lib/screens/settings_page.dart) | 个人档案、AI 配置、安全设置、数据管理、备份恢复 |
+| **设置** | ⚙️ | [settings_page.dart](la-le-me-app/lib/screens/settings_page.dart) | 个人档案、AI 配置、安全设置、数据管理、备份恢复、服务器配置 |
 
 ### 记录流程
 

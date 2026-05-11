@@ -1903,6 +1903,60 @@ enum SoundEffect { none, water_drop, flush, fart, custom }
 enum EmojiStyle { cute, serious, minimal }
 ```
 
+### 6.5 服务器配置模块
+
+#### 6.5.1 功能概述
+
+设置 → 服务器配置 页面允许用户手动指定后端服务器地址，替代编译时环境变量的方式：
+
+| 功能 | 说明 |
+|------|------|
+| 手动输入 | 用户可输入任意 HTTP/HTTPS 服务器地址 |
+| 健康检查 | `GET /health` 请求，实时显示服务器状态（🟢正常/🔴异常） |
+| 连接测试 | 验证服务器可达性，显示详细错误原因 |
+| 持久化保存 | 地址通过 `DatabaseService.setSetting` 持久化存储 |
+| Dio 连接 | 使用 Dio HTTP 客户端进行网络请求，5秒超时 |
+
+#### 6.5.2 页面结构
+
+```
+ServerConfigPage (StatefulWidget)
+├── AppBar: 服务器配置
+├── TextField: 服务器地址输入（带清除按钮）
+├── 状态指示卡片（彩色边框 + 图标 + 状态文字）
+│   ├── 🟢 服务器运行正常
+│   ├── 🟡 服务器响应异常
+│   └── 🔴 连接失败
+├── 操作按钮行
+│   ├── [健康检查] - 检测 /health 端点
+│   └── [连接服务器] - 保存配置 + 健康检查
+└── 提示卡片: 连接成功后积分自动上报说明
+```
+
+#### 6.5.3 健康检查实现
+
+```dart
+Future<void> _checkHealth() async {
+  final dio = Dio(BaseOptions(
+    connectTimeout: Duration(seconds: 5),
+    receiveTimeout: Duration(seconds: 5),
+  ));
+  final response = await dio.get('$url/health');
+
+  if (response.statusCode == 200) {
+    // 服务器正常，显示绿色状态
+  } else {
+    // 响应异常，显示黄色警告
+  }
+}
+```
+
+#### 6.5.4 路由注册
+
+```dart
+'/settings/server': (ctx) => const ServerConfigPage(),
+```
+
 ---
 
 ## 七、后端服务设计
@@ -3212,6 +3266,10 @@ spec:
 - ✅ **GitHub 代码同步** (https://github.com/MangataTS/WcRemark)
 - ✅ **Android 签名配置** — RSA 2048-bit, 有效期 10000 天
 - ✅ **Flutter SDK 3.38.5 环境就绪**
+- ✅ **首页近5天出库曲线图** — fl_chart 双线折线图
+- ✅ **记录详情页优化** — 按钮黑色字体 + 底部提交按钮
+- ✅ **个人档案页优化** — 底部保存按钮
+- ✅ **新增服务器配置页** — 手动填写地址 + 健康检查 + 连接测试
 
 #### 后端 (Go/Gin) — ✅ 已完成基础架构
 
@@ -3299,6 +3357,7 @@ spec:
 | `lib/screens/security_page.dart` | 安全设置页面 |
 | `lib/screens/data_management_page.dart` | 数据管理页面 |
 | `lib/screens/backup_page.dart` | 云端备份页面 |
+| `lib/screens/server_config_page.dart` | 服务器配置页面 |
 | `lib/utils/app_utils.dart` | 通用工具函数 |
 | `lib/utils/theme.dart` | 主题颜色、样式、常量定义 |
 

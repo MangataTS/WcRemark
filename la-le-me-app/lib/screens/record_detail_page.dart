@@ -48,7 +48,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         actions: [
           TextButton(
             onPressed: _save,
-            child: const Text('保存', style: TextStyle(fontSize: 16)),
+            child: const Text('保存', style: TextStyle(fontSize: 16, color: Colors.black)),
           ),
         ],
       ),
@@ -72,6 +72,21 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             _buildMoodSelector(),
             const SizedBox(height: 24),
             _buildNoteField(),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: _save,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF795548),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  elevation: 2,
+                ),
+                child: const Text('提交记录', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
+            ),
             const SizedBox(height: 40),
           ],
         ),
@@ -89,19 +104,21 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           children: [
             Expanded(
               child: ChoiceChip(
-                label: const Text('💧 小号'),
+                label: const Text('💧 小号', style: TextStyle(color: Colors.black)),
                 selected: _selectedType == 0,
                 onSelected: (_) => setState(() => _selectedType = 0),
                 selectedColor: Colors.blue.shade100,
+                backgroundColor: Colors.grey.shade100,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: ChoiceChip(
-                label: const Text('💩 大号'),
+                label: const Text('💩 大号', style: TextStyle(color: Colors.black)),
                 selected: _selectedType == 1,
                 onSelected: (_) => setState(() => _selectedType = 1),
                 selectedColor: Colors.brown.shade100,
+                backgroundColor: Colors.grey.shade100,
               ),
             ),
           ],
@@ -122,10 +139,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           children: _durationOptions.map((opt) {
             int index = _durationOptions.indexOf(opt);
             return ChoiceChip(
-              label: Text(opt['label'] as String),
+              label: Text(opt['label'] as String, style: const TextStyle(color: Colors.black)),
               selected: _selectedDuration == index,
               onSelected: (_) => setState(() => _selectedDuration = index),
               selectedColor: const Color(0xFFD4A574).withValues(alpha: 0.3),
+              backgroundColor: Colors.grey.shade100,
             );
           }).toList(),
         ),
@@ -154,10 +172,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           runSpacing: 8,
           children: bristolLabels.entries.map((e) {
             return ChoiceChip(
-              label: Text(e.value, style: const TextStyle(fontSize: 12)),
+              label: Text(e.value, style: const TextStyle(fontSize: 12, color: Colors.black)),
               selected: _selectedBristolType == e.key,
               onSelected: (_) => setState(() => _selectedBristolType = e.key),
               selectedColor: const Color(0xFFD4A574).withValues(alpha: 0.3),
+              backgroundColor: Colors.grey.shade100,
             );
           }).toList(),
         ),

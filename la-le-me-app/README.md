@@ -27,6 +27,7 @@ lib/
 │   ├── ranking_page.dart             # 排行榜（全球/同城/好友）
 │   ├── record_detail_page.dart       # 详细记录页面
 │   ├── security_page.dart            # 安全设置页面
+│   ├── server_config_page.dart       # 服务器配置页面
 │   ├── settings_page.dart            # 设置主页面
 │   ├── stats_page.dart               # 统计入口页
 │   └── stats_pages.dart              # 周/月/年统计页面

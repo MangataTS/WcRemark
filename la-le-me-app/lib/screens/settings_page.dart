@@ -104,6 +104,15 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => Navigator.pushNamed(context, '/settings/backup'),
           ),
 
+          _buildSectionHeader('服务器'),
+          ListTile(
+            leading: const Icon(Icons.dns, color: Color(0xFF795548)),
+            title: const Text('服务器配置'),
+            subtitle: const Text('配置后端服务器地址'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/settings/server'),
+          ),
+
           _buildSectionHeader('偏好'),
           ListTile(
             leading: const Icon(Icons.palette, color: Color(0xFF795548)),
