@@ -11,6 +11,7 @@ import 'screens/security_page.dart';
 import 'screens/data_management_page.dart';
 import 'screens/backup_page.dart';
 import 'screens/server_config_page.dart';
+import 'screens/achievement_page.dart';
 import 'services/theme_service.dart';
 import 'services/database_factory_stub.dart'
     if (dart.library.io) 'services/database_factory_io.dart'
@@ -49,6 +50,7 @@ class LaLeMeApp extends ConsumerWidget {
         '/settings/data': (ctx) => const DataManagementPage(),
         '/settings/backup': (ctx) => const BackupPage(),
         '/settings/server': (ctx) => const ServerConfigPage(),
+        '/stats/achievements': (ctx) => const AchievementPage(),
       },
     );
   }

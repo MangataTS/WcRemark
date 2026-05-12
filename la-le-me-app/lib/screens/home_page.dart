@@ -198,11 +198,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newUnlocks = await AchievementService.checkAndUnlock(record, newHistory);
     if (newUnlocks.isNotEmpty && mounted) {
       for (final id in newUnlocks) {
-        final achievement = Achievement.getById(id);
-        if (achievement != null) {
+        final def = Achievement.getDefById(id);
+        if (def != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('🏆 成就解锁：${achievement.name}'),
+              content: Text('🏆 成就解锁：${def.name}'),
               duration: const Duration(seconds: 3),
             ),
           );
@@ -251,11 +251,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newUnlocks = await AchievementService.checkAndUnlock(record, newHistory);
     if (newUnlocks.isNotEmpty && mounted) {
       for (final id in newUnlocks) {
-        final achievement = Achievement.getById(id);
-        if (achievement != null) {
+        final def = Achievement.getDefById(id);
+        if (def != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('🏆 成就解锁：${achievement.name}'),
+              content: Text('🏆 成就解锁：${def.name}'),
               duration: const Duration(seconds: 3),
             ),
           );

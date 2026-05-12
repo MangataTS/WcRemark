@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/achievement_service.dart';
 
-class StatsPage extends StatelessWidget {
+final unlockedCountProvider = FutureProvider<int>((ref) async {
+  return await AchievementService.getUnlockedCount();
+});
+
+final totalCountProvider = FutureProvider<int>((ref) async {
+  return await AchievementService.getTotalCount();
+});
+
+class StatsPage extends ConsumerWidget {
   const StatsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unlockedCountAsync = ref.watch(unlockedCountProvider);
+    final totalCountAsync = ref.watch(totalCountProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('数据统计')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _buildAchievementEntry(context, unlockedCountAsync, totalCountAsync),
+          const SizedBox(height: 16),
           _buildStatCard(
             context,
             icon: '📊',
@@ -34,6 +49,72 @@ class StatsPage extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/stats/yearly'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAchievementEntry(
+    BuildContext context,
+    AsyncValue<int> unlockedAsync,
+    AsyncValue<int> totalAsync,
+  ) {
+    final unlocked = unlockedAsync.valueOrNull ?? 0;
+    final total = totalAsync.valueOrNull ?? 24;
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.pushNamed(context, '/stats/achievements'),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF8E1), Color(0xFFFFE0B2)],
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const Text('🏆', style: TextStyle(fontSize: 32)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '成就殿堂',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF1A1A1A)),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '已解锁 $unlocked / $total 项成就',
+                          style: const TextStyle(fontSize: 13, color: Color(0xFF795548)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right, color: Color(0xFF795548)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: total > 0 ? unlocked / total : 0,
+                  minHeight: 6,
+                  backgroundColor: const Color(0xFFD4A574).withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
