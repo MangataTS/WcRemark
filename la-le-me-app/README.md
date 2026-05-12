@@ -81,14 +81,17 @@ echo "flutter.sdk=<你的Flutter SDK路径>" >> android/local.properties
 # 安装依赖
 flutter pub get
 
-# 开发调试
-flutter run
+# 一键构建（推荐，在项目根目录执行）
+cd .. && ./build_apk.sh
 
-# 构建 Release APK
+# 或手动构建
 flutter build apk --release
 
 # 输出路径
 # build/app/outputs/flutter-apk/app-release.apk
+
+# 开发调试
+flutter run
 ```
 
 ## Android 签名

@@ -3211,6 +3211,49 @@ spec:
               number: 80
 ```
 
+### 11.3 Android APK 构建脚本
+
+项目根目录提供了 `build_apk.sh` 一键构建脚本：
+
+```bash
+#!/bin/bash
+set -e
+
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+ANDROID_HOME="${PROJECT_ROOT}/android-sdk"
+JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+FLUTTER_BIN="/opt/homebrew/opt/flutter/bin"
+DIST_DIR="${PROJECT_ROOT}/dist"
+
+export ANDROID_HOME
+export JAVA_HOME
+export PATH="${FLUTTER_BIN}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+
+cd "${PROJECT_ROOT}/la-le-me-app"
+flutter pub get
+flutter build apk --release
+
+mkdir -p "${DIST_DIR}"
+cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-release.apk"
+```
+
+| 步骤 | 操作 |
+|------|------|
+| 1 | 自动设置 `ANDROID_HOME`、`JAVA_HOME`、Flutter 等环境变量 |
+| 2 | `flutter pub get` 安装依赖 |
+| 3 | `flutter build apk --release` 构建 Release APK |
+| 4 | 复制 APK 到 `dist/la-le-me-app-release.apk` |
+
+使用方法：
+```bash
+./build_apk.sh
+```
+
+构建产物：
+- 输出路径：`dist/la-le-me-app-release.apk`
+- 签名证书：`CN=kaptree, RSA 2048-bit`
+- 签名方案：APK Signature Scheme v2
+
 ---
 
 ## 十二、开发里程碑

@@ -55,6 +55,8 @@ WcRemark/
 │
 ├── plan/                  # 设计文档 (14 份模块详细设计)
 ├── Skills/                # 开发工具 Skills
+├── build_apk.sh            # 一键 APK 构建脚本
+├── dist/                   # 构建产物目录
 ├── .gitignore
 └── README.md
 ```
@@ -106,7 +108,10 @@ echo "flutter.sdk=<你的Flutter SDK路径>" >> android/local.properties
 # 安装依赖
 flutter pub get
 
-# 构建 Release APK
+# 一键构建（推荐）
+./build_apk.sh
+
+# 或手动构建
 flutter build apk --release
 
 # 输出路径: build/app/outputs/flutter-apk/app-release.apk
@@ -124,7 +129,23 @@ flutter run -d chrome
 - `android/app/kaptree.keystore`
 - `android/key.properties`（凭据文件，已加入 `.gitignore`）
 
-### 4. 配置 API 环境
+### 4. 一键构建脚本
+
+项目根目录提供了 `build_apk.sh`，自动完成依赖安装、APK 构建与输出：
+
+```bash
+./build_apk.sh
+```
+
+脚本流程：
+| 步骤 | 操作 |
+|------|------|
+| 1 | 自动设置 `ANDROID_HOME`、`JAVA_HOME`、Flutter 等环境变量 |
+| 2 | `flutter pub get` 安装依赖 |
+| 3 | `flutter build apk --release` 构建 Release APK |
+| 4 | 复制 APK 到 `dist/la-le-me-app-release.apk` |
+
+### 5. 配置 API 环境
 
 客户端支持两种方式配置后端服务器：
 
