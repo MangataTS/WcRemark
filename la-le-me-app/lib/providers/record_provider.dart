@@ -3,6 +3,7 @@ import '../models/toilet_record.dart';
 import '../services/database_service.dart';
 import '../services/score_calculator.dart';
 import '../services/regularity_calculator.dart';
+import '../services/season_service.dart';
 
 final todayRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
   return await DatabaseService.getTodayRecords();
@@ -69,6 +70,10 @@ final todayBigCountProvider = FutureProvider<int>((ref) async {
 
 final todaySmallCountProvider = FutureProvider<int>((ref) async {
   return await DatabaseService.getTodaySmallCount();
+});
+
+final seasonScoreProvider = FutureProvider<SeasonInfo>((ref) async {
+  return await SeasonService.getSeasonInfo();
 });
 
 class WeeklyStatsData {

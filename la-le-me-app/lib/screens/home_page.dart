@@ -309,6 +309,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           final subTitle = _getSubTitle(bigCount, smallCount, lastBigHours);
           final totalCount = bigCount + smallCount;
 
+          final seasonScoreAsync = ref.watch(seasonScoreProvider);
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(todayRecordsProvider);
@@ -337,7 +339,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(height: 20),
                       _buildCoreCard(totalCount, bigCount, smallCount, subTitle),
                       const SizedBox(height: 16),
-                      _buildWeekOverview(statsAsync, totalCount),
+                      _buildWeekOverview(statsAsync, totalCount, seasonScoreAsync),
                       const SizedBox(height: 16),
                       _buildDailyTip(statsAsync, bigCount, lastBigHours),
                       const SizedBox(height: 16),
@@ -442,9 +444,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildWeekOverview(AsyncValue<WeeklyStatsData> statsAsync, int totalCount) {
+  Widget _buildWeekOverview(AsyncValue<WeeklyStatsData> statsAsync, int totalCount, AsyncValue<SeasonInfo> seasonScoreAsync) {
     final regularityScore = statsAsync.valueOrNull?.regularityScore;
     final healthTitle = statsAsync.valueOrNull?.healthTitle;
+    final seasonScore = seasonScoreAsync.valueOrNull?.score ?? 0;
+    final seasonRank = seasonScoreAsync.valueOrNull?.rank;
 
     return Row(
       children: [
@@ -479,6 +483,43 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const Text('次', style: TextStyle(fontSize: 14, color: Color(0xFF999999))),
                   ],
                 ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Container(
+            height: 110,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color(0xFFF7F7F7),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Row(children: [
+                  Text('🏆', style: TextStyle(fontSize: 16)),
+                  SizedBox(width: 4),
+                  Text('积分', style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
+                ]),
+                const SizedBox(height: 4),
+                Text(
+                  '$seasonScore',
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                if (seasonRank != null)
+                  Text(
+                    '${seasonRank.icon} ${seasonRank.name}',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF999999)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
               ],
             ),
           ),
