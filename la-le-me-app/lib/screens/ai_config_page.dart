@@ -12,7 +12,7 @@ class _AIConfigPageState extends State<AIConfigPage> {
   String _selectedProvider = 'DeepSeek';
   final _apiKeyController = TextEditingController();
   final _baseUrlController = TextEditingController();
-  String _selectedModel = 'deepseek-chat';
+  final _modelController = TextEditingController();
   double _temperature = 0.3;
   String _analysisFrequency = 'manual';
   bool _obscureApiKey = true;
@@ -32,7 +32,7 @@ class _AIConfigPageState extends State<AIConfigPage> {
         _selectedProvider = config.provider;
         _apiKeyController.text = config.apiKey;
         _baseUrlController.text = config.baseUrl;
-        _selectedModel = config.model;
+        _modelController.text = config.model;
         _temperature = config.temperature;
         _analysisFrequency = config.analysisFrequency;
         _isLoading = false;
@@ -64,8 +64,8 @@ class _AIConfigPageState extends State<AIConfigPage> {
                   setState(() {
                     _selectedProvider = p.name;
                     _baseUrlController.text = p.baseUrl;
-                    if (p.models.isNotEmpty) {
-                      _selectedModel = p.models.first;
+                    if (p.models.isNotEmpty && _modelController.text.isEmpty) {
+                      _modelController.text = p.models.first;
                     }
                   });
                 },
@@ -107,13 +107,13 @@ class _AIConfigPageState extends State<AIConfigPage> {
 
           const Text('模型', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedModel,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
-            items: _getCurrentProviderModels().map((m) =>
-              DropdownMenuItem(value: m, child: Text(m)),
-            ).toList(),
-            onChanged: (v) => setState(() => _selectedModel = v ?? _selectedModel),
+          TextField(
+            controller: _modelController,
+            decoration: const InputDecoration(
+              labelText: '模型名称',
+              hintText: '例如：deepseek-chat、gpt-4o',
+              border: OutlineInputBorder(),
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -198,14 +198,6 @@ class _AIConfigPageState extends State<AIConfigPage> {
     );
   }
 
-  List<String> _getCurrentProviderModels() {
-    final provider = AIProvider.providers.firstWhere(
-      (p) => p.name == _selectedProvider,
-      orElse: () => AIProvider.providers.first,
-    );
-    return provider.models.isNotEmpty ? provider.models : [_selectedModel];
-  }
-
   Future<void> _testConnection() async {
     if (_apiKeyController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -220,7 +212,7 @@ class _AIConfigPageState extends State<AIConfigPage> {
         provider: _selectedProvider,
         apiKey: _apiKeyController.text.trim(),
         baseUrl: _baseUrlController.text.trim(),
-        model: _selectedModel,
+        model: _modelController.text.trim(),
         temperature: _temperature,
         analysisFrequency: _analysisFrequency,
       );
@@ -248,7 +240,7 @@ class _AIConfigPageState extends State<AIConfigPage> {
       provider: _selectedProvider,
       apiKey: _apiKeyController.text,
       baseUrl: _baseUrlController.text,
-      model: _selectedModel,
+      model: _modelController.text,
       temperature: _temperature,
       analysisFrequency: _analysisFrequency,
     );

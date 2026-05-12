@@ -7,6 +7,8 @@ JAVA_HOME="/opt/homebrew/opt/openjdk@17"
 FLUTTER_BIN="/opt/homebrew/opt/flutter/bin"
 DIST_DIR="${PROJECT_ROOT}/dist"
 
+APK_NAME="la-le-me-app-release.apk"
+
 export ANDROID_HOME
 export JAVA_HOME
 export PATH="${FLUTTER_BIN}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
@@ -32,12 +34,12 @@ flutter build apk --release
 echo ""
 echo "[3/3] 复制 APK 到 dist 目录..."
 mkdir -p "${DIST_DIR}"
-cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-release.apk"
+cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/${APK_NAME}"
 
-APK_SIZE=$(ls -lh "${DIST_DIR}/la-le-me-app-release.apk" | awk '{print $5}')
+APK_SIZE=$(ls -lh "${DIST_DIR}/${APK_NAME}" | awk '{print $5}')
 echo ""
 echo "========================================="
 echo "  ✅ 构建完成"
-echo "  APK: ${DIST_DIR}/la-le-me-app-release.apk"
+echo "  APK: ${DIST_DIR}/${APK_NAME}"
 echo "  大小: ${APK_SIZE}"
 echo "========================================="
