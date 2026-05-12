@@ -26,6 +26,14 @@ class StatsPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _buildStatCard(
+            context,
+            icon: '🕐',
+            title: '记录时间轴',
+            subtitle: '按时间查看所有记录，支持删除',
+            onTap: () => Navigator.pushNamed(context, '/stats/timeline'),
+          ),
+          const SizedBox(height: 12),
           _buildAchievementEntry(context, unlockedCountAsync, totalCountAsync),
           const SizedBox(height: 16),
           _buildStatCard(

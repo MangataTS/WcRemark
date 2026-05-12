@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/profile_model.dart';
 import '../services/database_service.dart';
 
@@ -17,7 +19,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Gender _selectedGender = Gender.unknown;
   int? _selectedBirthYear;
   JobType _selectedJobType = JobType.other;
+  String? _avatarBase64;
   bool _isLoading = true;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -36,9 +41,121 @@ class _ProfilePageState extends State<ProfilePage> {
         _weightController.text = profile.weightKg?.toString() ?? '';
         _waistController.text = profile.waistCm?.toString() ?? '';
         _selectedJobType = profile.jobType ?? JobType.other;
+        _avatarBase64 = profile.avatarBase64;
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _pickAvatar() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const Text(
+              '设置头像',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF795548)),
+              title: const Text('从相册选择'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickFromGallery();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFF795548)),
+              title: const Text('拍照'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickFromCamera();
+              },
+            ),
+            if (_avatarBase64 != null)
+              ListTile(
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
+                title: const Text('移除头像', style: TextStyle(color: Colors.red)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  setState(() => _avatarBase64 = null);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickFromGallery() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() => _avatarBase64 = base64Encode(bytes));
+    }
+  }
+
+  Future<void> _pickFromCamera() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() => _avatarBase64 = base64Encode(bytes));
+    }
+  }
+
+  Widget _buildAvatar() {
+    Widget avatar;
+    if (_avatarBase64 != null) {
+      try {
+        final bytes = base64Decode(_avatarBase64!);
+        avatar = CircleAvatar(
+          radius: 48,
+          backgroundImage: MemoryImage(bytes),
+        );
+      } catch (_) {
+        avatar = _buildDefaultAvatar();
+      }
+    } else {
+      avatar = _buildDefaultAvatar();
+    }
+
+    return avatar;
+  }
+
+  Widget _buildDefaultAvatar() {
+    return CircleAvatar(
+      radius: 48,
+      backgroundColor: const Color(0xFFD4A574),
+      child: const Icon(Icons.person, size: 48, color: Colors.white),
+    );
   }
 
   @override
@@ -66,25 +183,24 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 48,
-                    backgroundColor: const Color(0xFFD4A574),
-                    child: const Icon(Icons.person, size: 48, color: Colors.white),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF795548),
-                        shape: BoxShape.circle,
+              child: GestureDetector(
+                onTap: _pickAvatar,
+                child: Stack(
+                  children: [
+                    _buildAvatar(),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF795548),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                       ),
-                      child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -214,6 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _save() async {
     final profile = ProfileModel(
       nickname: _nicknameController.text.isEmpty ? null : _nicknameController.text,
+      avatarBase64: _avatarBase64,
       gender: _selectedGender,
       birthYear: _selectedBirthYear,
       heightCm: double.tryParse(_heightController.text),
