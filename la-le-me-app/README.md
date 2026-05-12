@@ -8,7 +8,7 @@
 lib/
 ├── main.dart                         # 应用入口，路由注册
 ├── models/
-│   ├── achievement.dart              # 成就系统定义（13 种成就）
+│   ├── achievement.dart              # 成就系统定义（24 种成就）
 │   ├── profile_model.dart            # 用户档案模型（BMI、腰臀比）
 │   ├── ranking.dart                  # 段位系统与排行榜数据模型
 │   ├── score.dart                    # 积分乘数与结算结果模型
@@ -19,6 +19,7 @@ lib/
 │   └── record_provider.dart          # 记录状态管理 (Riverpod)
 ├── screens/
 │   ├── ai_config_page.dart           # AI 大模型配置页面
+│   ├── achievement_page.dart         # 成就殿堂页面（分类展示+进度）
 │   ├── backup_page.dart              # 云端备份页面
 │   ├── data_management_page.dart     # 数据管理页面
 │   ├── home_page.dart                # 首页（问候语、核心卡片、快速记录）
