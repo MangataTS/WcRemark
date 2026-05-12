@@ -1,7 +1,7 @@
 # 「拉了么」全栈开发文档 & 功能设计说明书
 
-**版本**：v1.0.0（已构建 APK）  
-**日期**：2026-05-11  
+**版本**：v1.0.4（已构建 APK）  
+**日期**：2026-05-12  
 **定位**：隐私优先的生理健康记录与轻社交排名应用  
 **文档状态**：与代码同步，可直接用于开发实施
 
@@ -1552,73 +1552,50 @@ enum Gender { unknown, male, female, other }
 enum JobType { sedentary, standing, physical, mixed, other }
 ```
 
-### 6.2 生物识别解锁
+### 6.2 生物识别应用锁（已实现）
+
+实际实现参见以下文件：
+
+| 文件 | 说明 |
+|------|------|
+| [security_service.dart](la-le-me-app/lib/services/security_service.dart) | `SecurityService` — 封装 `local_auth` 的静态工具类 |
+| [lock_screen.dart](la-le-me-app/lib/screens/lock_screen.dart) | `AppLockWrapper` — 应用锁包装器，监听生命周期自动锁定/解锁 |
+| [security_page.dart](la-le-me-app/lib/screens/security_page.dart) | 安全设置页面 UI |
+
+**核心实现架构：**
+
+```
+main.dart → AppLockWrapper → 监听 AppLifecycleState
+                │
+     ┌──────────┴──────────┐
+     │  settingsProvider    │ 读取 appLockEnabled
+     │  SecurityService     │ 调用 local_auth 指纹识别
+     └──────────┬──────────┘
+                │
+     ┌──────────▼──────────┐
+     │  暂停 → 锁定标记     │  LifecycleState.paused
+     │  恢复 → 认证解锁     │  LifecycleState.resumed
+     │  失败 → 保持锁定     │  可重试
+     └─────────────────────┘
+```
+
+**SecurityService API：**
 
 ```dart
-class BiometricAuthService {
-  static final LocalAuthentication _localAuth = LocalAuthentication();
-
-  /// 检查设备是否支持生物识别
-  static Future<bool> isDeviceSupported() async {
-    return await _localAuth.isDeviceSupported();
-  }
-
-  /// 检查可用的生物识别类型
-  static Future<List<BiometricType>> getAvailableBiometrics() async {
-    return await _localAuth.getAvailableBiometrics();
-  }
-
-  /// 认证
-  static Future<bool> authenticate({
-    String localizedReason = "请验证身份以继续",
-    bool stickyAuth = true, // 切换应用后保持认证状态
-  }) async {
-    try {
-      return await _localAuth.authenticate(
-        localizedReason: localizedReason,
-        authMessages: const [
-          AndroidAuthMessages(
-            signInTitle: '身份验证',
-            cancelButton: '取消',
-            biometricHint: '请验证生物特征',
-            biometricNotRecognized: '识别失败，请重试',
-            biometricSuccess: '验证成功',
-            deviceCredentialsRequiredTitle: '需要设备凭证',
-            deviceCredentialsSetupDescription: '请设置锁屏密码',
-          ),
-          IOSAuthMessages(
-            cancelButton: '取消',
-            goToSettingsButton: '去设置',
-            goToSettingsDescription: '请在设置中启用生物识别',
-          ),
-        ],
-        options: AuthenticationOptions(
-          stickyAuth: stickyAuth,
-          biometricOnly: false, // 允许 fallback 到密码
-        ),
-      );
-    } on PlatformException catch (e) {
-      debugPrint("生物识别错误: ${e.message}");
-      return false;
-    }
-  }
-
-  /// 应用锁场景
-  static Future<bool> checkAppLock() async {
-    bool isEnabled = await LocalStorage.getAppLockEnabled();
-    if (!isEnabled) return true;
-
-    return await authenticate(localizedReason: "解锁「拉了么」");
-  }
-
-  /// 敏感操作验证
-  static Future<bool> verifySensitiveAction(String action) async {
-    return await authenticate(
-      localizedReason: "验证身份以$action",
-    );
-  }
+class SecurityService {
+  static Future<bool> isBiometricAvailable();    // 设备是否支持生物识别
+  static Future<List<BiometricType>> getAvailableBiometrics(); // 可用类型列表
+  static String biometricLabel(List<BiometricType> types);     // 中文标签
+  static Future<bool> authenticate({required String reason});  // 执行认证
+  static Future<void> setPrivacyMode(bool enabled);            // FLAG_SECURE 切换
 }
 ```
+
+**隐私模式实现：**
+
+- Android 通过 `MethodChannel('com.laleime/privacy')` 调用 `MainActivity.kt` 中的 `FLAG_SECURE` 窗口标志
+- 开启后最近任务列表和截图中隐藏应用内容
+- 设置页开关切换时立即生效，应用启动时自动恢复状态
 
 ### 6.3 数据备份与恢复
 
@@ -3301,6 +3278,41 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 ---
 
 ## 十四、开发进度记录
+
+### 2026-05-12 安全设置与时间轴完成
+
+#### 安全设置模块 — ✅ 已实现
+
+| 功能 | 说明 | 实现文件 |
+|------|------|---------|
+| 🔐 生物识别应用锁 | 指纹/面部识别锁定应用，后台切换自动锁定 | `security_service.dart` + `lock_screen.dart` |
+| 👁️ 隐私模式 | FLAG_SECURE 隐藏最近任务与截图内容 | `security_service.dart` + `MainActivity.kt` |
+| ⚙️ 安全设置页面 | 开关控制 + 生物识别测试按钮 + 说明提示 | `security_page.dart` |
+
+**实现细节：**
+- `AppLockWrapper` 通过 `WidgetsBindingObserver` 监听 `AppLifecycleState`
+- 应用切换到后台时自动设置锁定标记，恢复前台时弹出生物识别认证
+- 认证使用 `local_auth` 包的 `biometricOnly: true` 模式，仅接受指纹/面部
+- 隐私模式通过 `MethodChannel` 调用原生 `WindowManager.LayoutParams.FLAG_SECURE`
+
+#### 时间轴模块 — ✅ 已实现
+
+| 功能 | 说明 |
+|------|------|
+| 🕐 记录时间轴 | 数据 Tab 顶部入口，按日期分组显示全部记录 |
+| 🗑️ 滑动删除 | Dismissible 左滑手势 + 确认对话框防误删 |
+| 🔄 实时刷新 | 删除后自动触发全局 refreshTriggerProvider |
+
+#### 其他完成项
+- ✅ 头像上传功能（image_picker + base64 持久化）
+- ✅ 数据刷新机制修复（refreshTriggerProvider 统一刷新）
+- ✅ 应用图标替换为 logo.png
+
+#### APK 构建信息
+| 项目 | 值 |
+|------|------|
+| 版本号 | 1.0.4+1 |
+| 签名证书 | CN=kaptree, RSA 2048-bit |
 
 ### 2026-05-11 开发进度更新
 
