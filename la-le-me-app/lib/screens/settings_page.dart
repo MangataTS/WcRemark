@@ -157,6 +157,19 @@ class SettingsPage extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showMedicalDisclaimer(context),
           ),
+
+          _buildSectionHeader('关于作者'),
+          ListTile(
+            leading: const CircleAvatar(
+              radius: 18,
+              backgroundColor: Color(0xFF795548),
+              child: Text('K', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+            title: const Text('Kaptree'),
+            subtitle: const Text('感谢使用拉了么 ❤️'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showAuthorInfo(context),
+          ),
         ],
       ),
     );
@@ -317,6 +330,83 @@ class SettingsPage extends ConsumerWidget {
             child: const Text('我已了解'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showAuthorInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 36,
+                backgroundColor: Color(0xFF795548),
+                child: Text('K', style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Kaptree',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Color(0xFF1A1A1A)),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                '独立开发者 · 拉了么作者',
+                style: TextStyle(fontSize: 13, color: Color(0xFF999999)),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '如果这款小工具帮到了你，\n请我喝一杯咖啡吧 ☕️',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
+              ),
+              const SizedBox(height: 20),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/wx.png',
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.qr_code, size: 48, color: Color(0xFF999999)),
+                        SizedBox(height: 8),
+                        Text('赞赏码', style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '微信扫码 · 为爱发电',
+                style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('关闭', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
