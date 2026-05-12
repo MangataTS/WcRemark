@@ -5,19 +5,25 @@ import '../services/score_calculator.dart';
 import '../services/regularity_calculator.dart';
 import '../services/season_service.dart';
 
+final refreshTriggerProvider = StateProvider<int>((ref) => 0);
+
 final todayRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getTodayRecords();
 });
 
 final weekRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getRecentRecords(days: 7);
 });
 
 final monthRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getRecentRecords(days: 30);
 });
 
 final yearRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getRecentRecords(days: 365);
 });
 
@@ -34,6 +40,7 @@ class FiveDayStats {
 }
 
 final fiveDayStatsProvider = FutureProvider<FiveDayStats>((ref) async {
+  ref.watch(refreshTriggerProvider);
   final records = await DatabaseService.getRecentRecords(days: 5);
   final now = DateTime.now();
 
@@ -65,14 +72,17 @@ final fiveDayStatsProvider = FutureProvider<FiveDayStats>((ref) async {
 });
 
 final todayBigCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getTodayBigCount();
 });
 
 final todaySmallCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await DatabaseService.getTodaySmallCount();
 });
 
 final seasonScoreProvider = FutureProvider<SeasonInfo>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await SeasonService.getSeasonInfo();
 });
 
@@ -106,7 +116,8 @@ class WeeklyStatsData {
 }
 
 final weeklyStatsProvider = FutureProvider<WeeklyStatsData>((ref) async {
-  final records = await ref.watch(weekRecordsProvider.future);
+  ref.watch(refreshTriggerProvider);
+  final records = await DatabaseService.getRecentRecords(days: 7);
   return _calculateWeeklyStats(records);
 });
 
@@ -208,7 +219,8 @@ class MonthlyStatsData {
 }
 
 final monthlyStatsProvider = FutureProvider<MonthlyStatsData>((ref) async {
-  final records = await ref.watch(monthRecordsProvider.future);
+  ref.watch(refreshTriggerProvider);
+  final records = await DatabaseService.getRecentRecords(days: 30);
   return _calculateMonthlyStats(records);
 });
 
@@ -301,7 +313,8 @@ class YearlyStatsData {
 }
 
 final yearlyStatsProvider = FutureProvider<YearlyStatsData>((ref) async {
-  final records = await ref.watch(yearRecordsProvider.future);
+  ref.watch(refreshTriggerProvider);
+  final records = await DatabaseService.getRecentRecords(days: 365);
   return _calculateYearlyStats(records);
 });
 

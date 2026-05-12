@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/achievement.dart';
 import '../services/achievement_service.dart';
+import '../providers/record_provider.dart';
 
 final achievementsProvider = FutureProvider<List<Achievement>>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await AchievementService.getAllWithStatus();
 });
 

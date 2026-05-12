@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/achievement_service.dart';
+import '../providers/record_provider.dart';
 
 final unlockedCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await AchievementService.getUnlockedCount();
 });
 
 final totalCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(refreshTriggerProvider);
   return await AchievementService.getTotalCount();
 });
 

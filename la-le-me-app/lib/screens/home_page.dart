@@ -27,9 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ref.invalidate(todayRecordsProvider);
-        ref.invalidate(weekRecordsProvider);
-        ref.invalidate(weeklyStatsProvider);
+        ref.read(refreshTriggerProvider.notifier).state++;
         _initServices();
       }
     });
@@ -275,11 +273,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _refreshData() {
-    ref.invalidate(todayRecordsProvider);
-    ref.invalidate(todayBigCountProvider);
-    ref.invalidate(todaySmallCountProvider);
-    ref.invalidate(weekRecordsProvider);
-    ref.invalidate(weeklyStatsProvider);
+    ref.read(refreshTriggerProvider.notifier).state++;
   }
 
   @override
@@ -313,11 +307,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(todayRecordsProvider);
-              ref.invalidate(todayBigCountProvider);
-              ref.invalidate(todaySmallCountProvider);
-              ref.invalidate(weekRecordsProvider);
-              ref.invalidate(weeklyStatsProvider);
+              ref.read(refreshTriggerProvider.notifier).state++;
             },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
