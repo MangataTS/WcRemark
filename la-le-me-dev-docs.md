@@ -1,7 +1,7 @@
 # 「拉了么」全栈开发文档 & 功能设计说明书
 
-**版本**：v1.0.4（已构建 APK）  
-**日期**：2026-05-12  
+**版本**：v1.0.5（已构建 APK）  
+**日期**：2026-05-13  
 **定位**：隐私优先的生理健康记录与轻社交排名应用  
 **文档状态**：与代码同步，可直接用于开发实施
 
@@ -136,13 +136,19 @@ final Map<String, WidgetBuilder> routes = {
 | | - 左侧图标 | 56×56，圆角 16，白色背景，透明度 0.3 | 🧻 图标，32sp |
 | | - 主文案 | 22sp，白色，FontWeight.w600 | 「今日已出库 2 次 💩」 |
 | | - 副文案 | 14sp，白色70%透明度 | 动态健康提示 |
+| L3.5 | 出库趋势图 | 外边距 20，高度 220，圆角 16，背景白色 | fl_chart 三线折线图 |
+| | - 大号线 | 棕色 Color(0xFF8D6E63)，线宽 2.5，圆点标记 | 每日大号次数趋势 |
+| | - 小号线 | 绿色 Color(0xFF66BB6A)，线宽 2.5，圆点标记 | 每日小号次数趋势（v1.0.5 新增） |
+| | - 总计线 | 蓝色 Color(0xFF42A5F5)，线宽 2.5，虚线+圆点 | 每日所有类型合计 |
+| | - 图例 | 底部横向排列：棕色●大号 / 绿色●小号 / 蓝色●总计 | |
 | L4 | 本周概览 | 外边距 20，双卡片横向排列，间距 12 | |
-| | - 左卡片（次数）| Expanded，高度 100，圆角 20，背景 Color(0xFFF7F7F7) | |
-| | | 图标 ⭐ 16sp，标题「次数」12sp灰色 | |
-| | | 数字「8」32sp粗体，单位「次」14sp | |
+| | - 左卡片（总次数）| Expanded，高度 100，圆角 20，背景 Color(0xFFF7F7F7) | |
+| | | 图标 ⭐ 16sp，标题「次叔」12sp灰色 | |
+| | | 数字「328」32sp粗体，单位「次」14sp | 统计从开始到现在的历史记录总数 |
 | | - 右卡片（状态）| 同左卡片 | |
-| | | 图标 ❤️ 16sp，标题「状态」12sp灰色 | |
-| | | 文字「黄金标准」24sp粗体 | |
+| | | 图标 动态(🌟/✨/👌/🕐/⏰/🚨/🔄/😰/📋) 16sp | 基于今日+7天记录智能判定 |
+| | | 标题「状态」12sp灰色 | |
+| | | 状态文字 24sp粗体，严重度颜色 | 如「模范标兵」「肠道畅通」「运转正常」等 | |
 | L5 | 肠道日报 | 外边距 20，圆角 16，背景 Color(0xFFE8F5E9) | 浅绿色 |
 | | - 标题 | 14sp，Color(0xFF2E7D32)，FontWeight.w600 | 💡 肠道日报 |
 | | - 正文 | 14sp，Color(0xFF1B5E20) | 动态提示 |
@@ -277,7 +283,7 @@ END;
 
 | 维度 | 周统计 | 月统计 | 年统计 |
 |------|--------|--------|--------|
-| 次数趋势 | 7日柱状图 | 日历热力图 | 12月折线图 |
+| 次数趋势 | 7日柱状图 | 💩日历标记 | 12月折线图 |
 | 时段分布 | 7×24热力图 | 月度时段饼图 | 季度时段对比 |
 | 类型占比 | 周饼图 | 月饼图 | 年饼图 |
 | 布里斯托分布 | 周饼图 | 月饼图 | 年饼图 |
@@ -446,7 +452,7 @@ class PaidPoopCalculator {
 
 ### 3.3 月统计页面（MonthlyStatsPage）
 
-#### 3.3.1 日历热力图组件
+#### 3.3.1 日历标记组件（💩 Emoji 模式，v1.0.5 更新）
 
 ```dart
 class MonthlyCalendarView extends StatelessWidget {
@@ -456,14 +462,13 @@ class MonthlyCalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 生成当月日历网格
     int daysInMonth = DateTime(year, month + 1, 0).day;
 
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7, // 7天一周
+        crossAxisCount: 7,
         childAspectRatio: 1,
       ),
       itemCount: daysInMonth,
@@ -474,29 +479,26 @@ class MonthlyCalendarView extends StatelessWidget {
           return dt.day == day && dt.month == month && dt.year == year;
         }).toList();
 
-        return DayCell(
-          day: day,
-          records: dayRecords,
-          // 颜色深度基于当天大号次数
-          intensity: dayRecords.where((r) => r.type == RecordType.big).length,
-        );
+        int count = dayRecords.length;
+        if (count > 0) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('💩', style: TextStyle(fontSize: 15)),       // 出库日用 💩 标记
+              Text('$day', style: TextStyle(fontSize: 9, color: Color(0xFF795548), fontWeight: FontWeight.w600)),
+            ],
+          );
+        } else {
+          return Center(
+            child: Text('$day', style: TextStyle(fontSize: 11, color: Color(0xFF999999))),
+          );
+        }
       },
     );
   }
 }
-
-// 颜色映射：0次=白色，1次=浅棕，2次=中棕，3次=深棕，4次+=最深
-Color getHeatColor(int count) {
-  List<Color> colors = [
-    Color(0xFFFFFFFF), // 0
-    Color(0xFFF5E6D3), // 1
-    Color(0xFFE6C9A8), // 2
-    Color(0xFFD4A574), // 3
-    Color(0xFFA67B5B), // 4+
-  ];
-  return colors[min(count, colors.length - 1)];
-}
 ```
+
 
 #### 3.3.2 健康等级评定
 
@@ -549,6 +551,107 @@ class HealthGradeCalculator {
   }
 }
 ```
+
+#### 3.3.3 首页健康状态判定（v1.0.5 新增）
+
+```dart
+/// 首页 ❤️ 动态健康状态
+/// 基于今日记录 + 最近 7 天记录，通过科学方法综合判定
+class HomeHealthStatus {
+  final String icon;    // 状态图标（🌟/✨/👌/🕐/⏰/🚨/🔄/😰/📋）
+  final String label;   // 状态名称
+  final String detail;  // 详细描述
+  final int severity;   // 严重程度 0=正常 1=轻微 2=中度 3=严重
+
+  const HomeHealthStatus({
+    required this.icon,
+    required this.label,
+    required this.detail,
+    required this.severity,
+  });
+}
+
+class HomeHealthStatusCalculator {
+  static HomeHealthStatus calculate({
+    required List<ToiletRecord> todayRecords,
+    required List<ToiletRecord> weekRecords,
+  }) {
+    int todayBigCount = todayRecords.where((r) => r.type == RecordType.big).length;
+    
+    // 1. 计算最近一次大号距今小时数
+    DateTime? lastBigTime;
+    for (var r in todayRecords) {
+      if (r.type == RecordType.big) {
+        DateTime rt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
+        if (lastBigTime == null || rt.isAfter(lastBigTime)) lastBigTime = rt;
+      }
+    }
+    // 若今日无大号，回查最近 7 天
+    if (lastBigTime == null) {
+      for (var r in weekRecords) {
+        if (r.type == RecordType.big) {
+          DateTime rt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
+          if (lastBigTime == null || rt.isAfter(lastBigTime)) lastBigTime = rt;
+        }
+      }
+    }
+    
+    int lastBigHours = lastBigTime != null 
+        ? DateTime.now().difference(lastBigTime).inHours 
+        : 999;
+
+    // 2. 计算 7 天规律指数
+    int regularityScore = RegularityCalculator.calculate(weekRecords);
+
+    // 3. 计算布里斯托质量（3-4 型占比）
+    List<ToiletRecord> bigWeekRecords = weekRecords.where((r) => r.type == RecordType.big).toList();
+    int healthyBristol = bigWeekRecords.where((r) => r.bristolType == 3 || r.bristolType == 4).length;
+    double bristolQuality = bigWeekRecords.isEmpty ? 1.0 : healthyBristol / bigWeekRecords.length;
+
+    // 4. 计算时长质量（3-8 分钟占比）
+    int goodDuration = bigWeekRecords.where((r) {
+      int min = (r.duration ?? 0) ~/ 60;
+      return min >= 3 && min <= 8;
+    }).length;
+    double durationQuality = bigWeekRecords.isEmpty ? 1.0 : goodDuration / bigWeekRecords.length;
+
+    // 5. 判定状态
+    if (weekRecords.isEmpty) {
+      return const HomeHealthStatus(icon: '📋', label: '数据收集中', detail: '记录几天后再来看看', severity: 0);
+    }
+    if (todayBigCount >= 4) {
+      return const HomeHealthStatus(icon: '😰', label: '频率异常', detail: '今天已超过4次大号', severity: 3);
+    }
+    if (todayBigCount >= 3) {
+      return const HomeHealthStatus(icon: '🔄', label: '频率偏高', detail: '注意饮食，避免刺激食物', severity: 2);
+    }
+    if (lastBigHours >= 48) {
+      return const HomeHealthStatus(icon: '🚨', label: '便秘警报', detail: '已超48小时未出库', severity: 3);
+    }
+    if (lastBigHours >= 24) {
+      return HomeHealthStatus(icon: '⏰', label: '稍需留意', detail: '已${lastBigHours ~/ 24 + 1}天未出库', severity: 2);
+    }
+    if (todayBigCount == 0) {
+      return const HomeHealthStatus(icon: '🕐', label: '等待出库', detail: '今天还没大号哦', severity: 1);
+    }
+    if (regularityScore >= 85 && bristolQuality >= 0.7 && durationQuality >= 0.7) {
+      return const HomeHealthStatus(icon: '🌟', label: '模范标兵', detail: '规律健康，堪称典范！', severity: 0);
+    }
+    if (regularityScore >= 65 && bristolQuality >= 0.5) {
+      return const HomeHealthStatus(icon: '✨', label: '肠道畅通', detail: '整体状态不错', severity: 0);
+    }
+    return const HomeHealthStatus(icon: '👌', label: '运转正常', detail: '一切正常', severity: 0);
+  }
+}
+```
+
+**严重度颜色映射**：
+| 严重度 | 颜色 | 说明 |
+|--------|------|------|
+| 0 正常 | `Color(0xFF4CAF50)` 绿色 | 模范标兵 / 肠道畅通 / 运转正常 / 数据收集中 |
+| 1 轻微 | `Color(0xFFFF9800)` 橙色 | 等待出库 |
+| 2 中度 | `Color(0xFFE65100)` 深橙 | 稍需留意 / 频率偏高 |
+| 3 严重 | `Color(0xFFF44336)` 红色 | 便秘警报 / 频率异常 |
 
 ### 3.4 年统计页面（YearlyStatsPage）
 
@@ -3279,6 +3382,33 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 
 ## 十四、开发进度记录
 
+### 2026-05-13 首页优化与统计增强
+
+#### 首页功能优化 — ✅ 已实现
+
+| 功能 | 说明 | 实现文件 |
+|------|------|---------|
+| 📈 小号趋势曲线 | 首页出库趋势图新增绿色小号线（Color 0xFF66BB6A）展示每日小号趋势 | `home_page.dart` + `record_provider.dart` |
+| ⭐ 历史总次数 | 首页「次叔」卡片改为统计从开始到现在的全部记录总数（`getTotalRecordCount()`） | `home_page.dart` + `record_provider.dart` |
+| ❤️ 智能健康状态 | 首页状态卡片基于今日+7天记录科学判定，支持9种动态状态（模范标兵/肠道畅通/运转正常/等待出库/稍需留意/便秘警报/频率偏高/频率异常/数据收集中） | `home_page.dart` + `regularity_calculator.dart` |
+
+**实现细节：**
+- `FiveDayStats` 新增 `List<int> smallCounts` 字段，Provider 中计算每日小号次数
+- 趋势图由双线（大号+总计）升级为三线（大号+小号+总计），图例同步更新
+- `totalRecordCountProvider` 独立 FutureProvider，调用 `DatabaseService.getTotalRecordCount()` 获取历史总记录数
+- `HomeHealthStatusCalculator` 综合评估：最近大号间隔、7天规律指数、布里斯托质量、时长质量，按严重度分级
+
+#### 月度统计日历优化 — ✅ 已实现
+
+| 功能 | 说明 | 实现文件 |
+|------|------|---------|
+| 💩 Emoji 标记 | 月度统计日历中有出库记录的日期用 💩 标记替代棕色热力图 | `stats_pages.dart` |
+
+**实现细节：**
+- 当天有记录（count > 0）：显示 💩（15sp）+ 日期数字（9sp, 棕色粗体）
+- 当天无记录（count == 0）：灰色圆形背景 + 日期数字（11sp, 灰色）
+- 移除原有的 `getHeatColor()` 棕色热力映射逻辑
+
 ### 2026-05-12 安全设置与时间轴完成
 
 #### 安全设置模块 — ✅ 已实现
@@ -3321,7 +3451,7 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 - ✅ **GitHub 代码同步** (https://github.com/MangataTS/WcRemark)
 - ✅ **Android 签名配置** — RSA 2048-bit, 有效期 10000 天
 - ✅ **Flutter SDK 3.38.5 环境就绪**
-- ✅ **首页近5天出库曲线图** — fl_chart 双线折线图
+- ✅ **首页近5天出库曲线图** — fl_chart 三线折线图（大号+小号+总计，v1.0.5 升级）
 - ✅ **记录详情页优化** — 按钮黑色字体 + 底部提交按钮
 - ✅ **个人档案页优化** — 底部保存按钮
 - ✅ **新增服务器配置页** — 手动填写地址 + 健康检查 + 连接测试
@@ -3390,7 +3520,7 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 | `lib/services/api_service.dart` | REST API 客户端（Dio + JWT 认证） |
 | `lib/services/api_config.dart` | 环境变量配置管理 |
 | `lib/services/score_calculator.dart` | 客户端积分计算引擎（R/H/T/P/S/M 六维乘数） |
-| `lib/services/regularity_calculator.dart` | 规律指数、健康等级、年度关键词算法 |
+| `lib/services/regularity_calculator.dart` | 规律指数、健康等级、年度关键词、首页健康状态判定算法 |
 | `lib/services/ai_service.dart` | AI 肠道顾问服务（多厂商大模型接入） |
 | `lib/services/anomaly_detector.dart` | 异常预警检测（便秘/腹泻/血便） |
 | `lib/services/anti_cheat_service.dart` | 客户端反作弊预检 |
@@ -3401,9 +3531,9 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 | `lib/services/settings_service.dart` | 应用偏好设置持久化 |
 | `lib/services/theme_service.dart` | Light/Dark/OLED 主题切换 |
 | `lib/screens/main_shell.dart` | 底部 4 Tab 主壳 |
-| `lib/screens/home_page.dart` | 首页（问候语、核心卡片、快速记录） |
+| `lib/screens/home_page.dart` | 首页（问候语、核心卡片、5日趋势三线图、快速记录） |
 | `lib/screens/stats_page.dart` | 统计入口页 |
-| `lib/screens/stats_pages.dart` | 周/月/年统计页面 |
+| `lib/screens/stats_pages.dart` | 周/月(💩日历)/年统计页面 |
 | `lib/screens/ranking_page.dart` | 排行榜（全球/同城/好友三栏 Tab） |
 | `lib/screens/record_detail_page.dart` | 详细记录页面 |
 | `lib/screens/settings_page.dart` | 设置主页面 |
@@ -3422,6 +3552,7 @@ cp build/app/outputs/flutter-apk/app-release.apk "${DIST_DIR}/la-le-me-app-relea
 |------|--------|--------|------|
 | 积分六维乘数计算 (R/H/T/P/S/M) | ✅ score_calculator.dart | ✅ score_service.go | 完整实现 |
 | 规律指数（时间标准差+环形展开） | ✅ regularity_calculator.dart | - | 完整实现 |
+| 首页健康状态判定 | ✅ regularity_calculator.dart | - | v1.0.5 新增，9种动态状态 |
 | 带薪收益计算 | ✅ score_calculator.dart | - | 完整实现 |
 | 健康等级评定 | ✅ regularity_calculator.dart | - | 完整实现 |
 | 布里斯托分型映射 | ✅ score_calculator.dart | ✅ anti_cheat_service.go | 完整实现 |

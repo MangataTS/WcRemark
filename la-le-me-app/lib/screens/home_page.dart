@@ -10,6 +10,10 @@ import '../services/anti_cheat_service.dart';
 import '../services/achievement_service.dart';
 import '../services/season_service.dart';
 import '../services/anomaly_detector.dart';
+import '../services/sound_service.dart';
+import '../services/app_content_loader.dart';
+import '../services/regularity_calculator.dart';
+import '../screens/settings_page.dart';
 import '../models/achievement.dart';
 import '../providers/record_provider.dart';
 import '../utils/app_utils.dart';
@@ -68,11 +72,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   String _getDailyTip(int bigCount, int? lastBigHours, int regularityScore) {
-    if (bigCount == 0) return '肠道日报：今日尚未出库，多喝水有助排便。';
-    if (regularityScore >= 80) return '肠道日报：规律指数优秀，继续保持！';
-    if (regularityScore >= 60) return '肠道日报：规律指数尚可，注意固定时间如厕。';
-    if (lastBigHours != null && lastBigHours > 48) return '肠道日报：已经超过2天未出库，建议增加膳食纤维摄入。';
-    return '肠道日报：保持每日规律如厕习惯，有助于肠道健康。';
+    if (bigCount == 0) return AppContentLoader.getDailyTipText('no_record');
+    if (regularityScore >= 80)
+      return AppContentLoader.getDailyTipText('regularity_high');
+    if (regularityScore >= 60)
+      return AppContentLoader.getDailyTipText('regularity_medium');
+    if (lastBigHours != null && lastBigHours > 48)
+      return AppContentLoader.getDailyTipText('constipation_risk');
+    return AppContentLoader.getDailyTipText('default');
   }
 
   void _showRecordActionSheet() {
@@ -103,7 +110,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const Icon(Icons.water_drop, color: Colors.blue, size: 28),
+              leading:
+                  const Icon(Icons.water_drop, color: Colors.blue, size: 28),
               title: const Text('小号', style: TextStyle(fontSize: 16)),
               subtitle: const Text('快速记录'),
               onTap: () {
@@ -189,11 +197,14 @@ class _HomePageState extends ConsumerState<HomePage> {
             duration: const Duration(seconds: 2),
           ),
         );
+        final settings = ref.read(settingsNotifierProvider);
+        SoundService.playWaterDrop(settings);
       }
     }
 
     final newHistory = [...history, record];
-    final newUnlocks = await AchievementService.checkAndUnlock(record, newHistory);
+    final newUnlocks =
+        await AchievementService.checkAndUnlock(record, newHistory);
     if (newUnlocks.isNotEmpty && mounted) {
       for (final id in newUnlocks) {
         final def = Achievement.getDefById(id);
@@ -246,7 +257,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
 
     final newHistory = [...history, record];
-    final newUnlocks = await AchievementService.checkAndUnlock(record, newHistory);
+    final newUnlocks =
+        await AchievementService.checkAndUnlock(record, newHistory);
     if (newUnlocks.isNotEmpty && mounted) {
       for (final id in newUnlocks) {
         final def = Achievement.getDefById(id);
@@ -268,6 +280,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           duration: const Duration(seconds: 2),
         ),
       );
+      final settings = ref.read(settingsNotifierProvider);
+      SoundService.playWaterDrop(settings);
       _refreshData();
     }
   }
@@ -289,14 +303,17 @@ class _HomePageState extends ConsumerState<HomePage> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('加载失败: $e')),
         data: (records) {
-          final bigRecords = records.where((r) => r.type == RecordType.big).toList();
+          final bigRecords =
+              records.where((r) => r.type == RecordType.big).toList();
           final bigCount = bigRecords.length;
-          final smallCount = records.where((r) => r.type == RecordType.small).length;
+          final smallCount =
+              records.where((r) => r.type == RecordType.small).length;
 
           int? lastBigHours;
           if (bigRecords.isNotEmpty) {
             final lastBig = bigRecords.first;
-            final diff = DateTime.now().millisecondsSinceEpoch - lastBig.timestamp;
+            final diff =
+                DateTime.now().millisecondsSinceEpoch - lastBig.timestamp;
             lastBigHours = (diff / (1000 * 60 * 60)).round();
           }
 
@@ -304,6 +321,14 @@ class _HomePageState extends ConsumerState<HomePage> {
           final totalCount = bigCount + smallCount;
 
           final seasonScoreAsync = ref.watch(seasonScoreProvider);
+          final totalRecordCountAsync = ref.watch(totalRecordCountProvider);
+          final weekRecordsAsync = ref.watch(weekRecordsProvider);
+
+          final weekRecords = weekRecordsAsync.valueOrNull ?? [];
+          final healthStatus = HomeHealthStatusCalculator.calculate(
+            todayRecords: records,
+            weekRecords: weekRecords,
+          );
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -319,7 +344,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                     children: [
                       const SizedBox(height: 16),
                       Text(dateStr,
-                          style: const TextStyle(fontSize: 14, color: Color(0xFF999999))),
+                          style: const TextStyle(
+                              fontSize: 14, color: Color(0xFF999999))),
                       const SizedBox(height: 4),
                       Text(greeting,
                           style: const TextStyle(
@@ -327,9 +353,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1A1A1A))),
                       const SizedBox(height: 20),
-                      _buildCoreCard(totalCount, bigCount, smallCount, subTitle),
+                      _buildCoreCard(
+                          totalCount, bigCount, smallCount, subTitle),
                       const SizedBox(height: 16),
-                      _buildWeekOverview(statsAsync, totalCount, seasonScoreAsync),
+                      _buildWeekOverview(statsAsync, totalRecordCountAsync,
+                          seasonScoreAsync, healthStatus),
                       const SizedBox(height: 16),
                       _buildDailyTip(statsAsync, bigCount, lastBigHours),
                       const SizedBox(height: 16),
@@ -379,7 +407,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildCoreCard(int totalCount, int bigCount, int smallCount, String subTitle) {
+  Widget _buildCoreCard(
+      int totalCount, int bigCount, int smallCount, String subTitle) {
     return Container(
       height: 140,
       decoration: BoxDecoration(
@@ -434,11 +463,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildWeekOverview(AsyncValue<WeeklyStatsData> statsAsync, int totalCount, AsyncValue<SeasonInfo> seasonScoreAsync) {
-    final regularityScore = statsAsync.valueOrNull?.regularityScore;
-    final healthTitle = statsAsync.valueOrNull?.healthTitle;
+  Widget _buildWeekOverview(
+      AsyncValue<WeeklyStatsData> statsAsync,
+      AsyncValue<int> totalRecordCountAsync,
+      AsyncValue<SeasonInfo> seasonScoreAsync,
+      HomeHealthStatus healthStatus) {
     final seasonScore = seasonScoreAsync.valueOrNull?.score ?? 0;
     final seasonRank = seasonScoreAsync.valueOrNull?.rank;
+    final allTimeTotal = totalRecordCountAsync.valueOrNull ?? 0;
+
+    final severityColors = [
+      const Color(0xFF4CAF50),
+      const Color(0xFFFF9800),
+      const Color(0xFFE65100),
+      const Color(0xFFF44336),
+    ];
+    final statusColor = severityColors[healthStatus.severity.clamp(0, 3)];
 
     return Row(
       children: [
@@ -457,20 +497,23 @@ class _HomePageState extends ConsumerState<HomePage> {
                 const Row(children: [
                   Text('⭐', style: TextStyle(fontSize: 16)),
                   SizedBox(width: 4),
-                  Text('次数', style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
+                  Text('次数',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
                 ]),
                 const SizedBox(height: 4),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text('$totalCount',
+                    Text('$allTimeTotal',
                         style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF1A1A1A))),
                     const SizedBox(width: 2),
-                    const Text('次', style: TextStyle(fontSize: 14, color: Color(0xFF999999))),
+                    const Text('次',
+                        style:
+                            TextStyle(fontSize: 14, color: Color(0xFF999999))),
                   ],
                 ),
               ],
@@ -493,7 +536,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 const Row(children: [
                   Text('🏆', style: TextStyle(fontSize: 16)),
                   SizedBox(width: 4),
-                  Text('积分', style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
+                  Text('积分',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
                 ]),
                 const SizedBox(height: 4),
                 Text(
@@ -507,7 +551,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 if (seasonRank != null)
                   Text(
                     '${seasonRank.icon} ${seasonRank.name}',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF999999)),
+                    style:
+                        const TextStyle(fontSize: 11, color: Color(0xFF999999)),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -527,25 +572,27 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Row(children: [
-                  Text('❤️', style: TextStyle(fontSize: 16)),
-                  SizedBox(width: 4),
-                  Text('状态', style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
+                Row(children: [
+                  Text(healthStatus.icon, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(width: 4),
+                  const Text('状态',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
                 ]),
                 const SizedBox(height: 4),
                 Text(
-                  healthTitle ?? '加载中...',
-                  style: const TextStyle(
-                    fontSize: 22,
+                  healthStatus.label,
+                  style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A1A),
+                    color: statusColor,
                   ),
                 ),
-                if (regularityScore != null)
-                  Text(
-                    '规律指数 $regularityScore',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF999999)),
-                  ),
+                Text(
+                  healthStatus.detail,
+                  style:
+                      const TextStyle(fontSize: 11, color: Color(0xFF999999)),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -554,7 +601,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildDailyTip(AsyncValue<WeeklyStatsData> statsAsync, int bigCount, int? lastBigHours) {
+  Widget _buildDailyTip(
+      AsyncValue<WeeklyStatsData> statsAsync, int bigCount, int? lastBigHours) {
     final regularityScore = statsAsync.valueOrNull?.regularityScore ?? 50;
     final tip = _getDailyTip(bigCount, lastBigHours, regularityScore);
 
@@ -587,8 +635,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       error: (e, st) => const SizedBox(height: 0),
       data: (stats) {
         final bigCounts = stats.bigCounts;
+        final smallCounts = stats.smallCounts;
         final totalCounts = stats.totalCounts;
-        final maxY = (totalCounts.reduce((a, b) => a > b ? a : b) + 1).toDouble().clamp(3.0, double.infinity);
+        final maxY = (totalCounts.reduce((a, b) => a > b ? a : b) + 1)
+            .toDouble()
+            .clamp(3.0, double.infinity);
 
         return Container(
           padding: const EdgeInsets.all(16),
@@ -618,11 +669,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                 children: [
                   _legendDot(const Color(0xFFD4A574)),
                   const SizedBox(width: 4),
-                  const Text('大号', style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                  const Text('大号',
+                      style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                  const SizedBox(width: 12),
+                  _legendDot(const Color(0xFF66BB6A)),
+                  const SizedBox(width: 4),
+                  const Text('小号',
+                      style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
                   const SizedBox(width: 12),
                   _legendDot(const Color(0xFF90CAF9)),
                   const SizedBox(width: 4),
-                  const Text('总计', style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                  const Text('总计',
+                      style: TextStyle(fontSize: 10, color: Color(0xFF999999))),
                 ],
               ),
               const SizedBox(height: 12),
@@ -644,19 +702,23 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ),
                     titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             final idx = value.toInt();
-                            if (idx < 0 || idx >= stats.dates.length) return const SizedBox.shrink();
+                            if (idx < 0 || idx >= stats.dates.length)
+                              return const SizedBox.shrink();
                             return Padding(
                               padding: const EdgeInsets.only(top: 6),
                               child: Text(
                                 stats.dates[idx],
-                                style: const TextStyle(fontSize: 10, color: Color(0xFF999999)),
+                                style: const TextStyle(
+                                    fontSize: 10, color: Color(0xFF999999)),
                               ),
                             );
                           },
@@ -671,7 +733,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                             if (value == value.roundToDouble() && value >= 0) {
                               return Text(
                                 value.toInt().toString(),
-                                style: const TextStyle(fontSize: 10, color: Color(0xFF999999)),
+                                style: const TextStyle(
+                                    fontSize: 10, color: Color(0xFF999999)),
                               );
                             }
                             return const SizedBox.shrink();
@@ -684,13 +747,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                       touchTooltipData: LineTouchTooltipData(
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots.map((spot) {
-                            final label = spot.barIndex == 0 ? '大号' : '总计';
+                            final label = spot.barIndex == 0
+                                ? '大号'
+                                : spot.barIndex == 1
+                                    ? '小号'
+                                    : '总计';
                             return LineTooltipItem(
                               '$label: ${spot.y.toInt()}次',
                               TextStyle(
                                 color: spot.barIndex == 0
                                     ? const Color(0xFFD4A574)
-                                    : const Color(0xFF90CAF9),
+                                    : spot.barIndex == 1
+                                        ? const Color(0xFF66BB6A)
+                                        : const Color(0xFF90CAF9),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                               ),
@@ -701,7 +770,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     lineBarsData: [
                       LineChartBarData(
-                        spots: List.generate(5, (i) => FlSpot(i.toDouble(), bigCounts[i].toDouble())),
+                        spots: List.generate(
+                            5,
+                            (i) =>
+                                FlSpot(i.toDouble(), bigCounts[i].toDouble())),
                         isCurved: true,
                         curveSmoothness: 0.3,
                         color: const Color(0xFFD4A574),
@@ -722,7 +794,35 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                       ),
                       LineChartBarData(
-                        spots: List.generate(5, (i) => FlSpot(i.toDouble(), totalCounts[i].toDouble())),
+                        spots: List.generate(
+                            5,
+                            (i) => FlSpot(
+                                i.toDouble(), smallCounts[i].toDouble())),
+                        isCurved: true,
+                        curveSmoothness: 0.3,
+                        color: const Color(0xFF66BB6A),
+                        barWidth: 2.5,
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, xPercentage, bar, index) =>
+                              FlDotCirclePainter(
+                            radius: 4,
+                            color: const Color(0xFF66BB6A),
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          ),
+                        ),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color:
+                              const Color(0xFF66BB6A).withValues(alpha: 0.08),
+                        ),
+                      ),
+                      LineChartBarData(
+                        spots: List.generate(
+                            5,
+                            (i) => FlSpot(
+                                i.toDouble(), totalCounts[i].toDouble())),
                         isCurved: true,
                         curveSmoothness: 0.3,
                         color: const Color(0xFF90CAF9),
@@ -739,7 +839,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: const Color(0xFF90CAF9).withValues(alpha: 0.08),
+                          color:
+                              const Color(0xFF90CAF9).withValues(alpha: 0.08),
                         ),
                       ),
                     ],

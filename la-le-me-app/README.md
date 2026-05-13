@@ -8,7 +8,7 @@
 lib/
 ├── main.dart                         # 应用入口，路由注册
 ├── models/
-│   ├── achievement.dart              # 成就系统定义（24 种成就）
+│   ├── achievement.dart              # 成就系统定义（从 JSON 加载）
 │   ├── profile_model.dart            # 用户档案模型（BMI、腰臀比）
 │   ├── ranking.dart                  # 段位系统与排行榜数据模型
 │   ├── score.dart                    # 积分乘数与结算结果模型
@@ -39,6 +39,7 @@ lib/
 │   ├── anti_cheat_service.dart       # 客户端反作弊预检
 │   ├── api_config.dart               # 环境变量与 API 配置
 │   ├── api_service.dart              # REST API 客户端 (Dio + JWT)
+│   ├── app_content_loader.dart       # JSON 配置加载器（成就+日报）
 │   ├── backup_encryption.dart        # AES-256-GCM 加密备份/解密
 │   ├── database_factory_io.dart      # SQLite 数据库工厂 (IO)
 │   ├── database_factory_stub.dart    # SQLite 数据库工厂 (Stub)
@@ -69,6 +70,26 @@ lib/
 | web_socket_channel | ^3.0.3 | WebSocket 实时推送 |
 | uuid | ^4.3.3 | UUID 生成 |
 | intl | ^0.19.0 | 国际化日期格式化 |
+| audioplayers | ^6.1.0 | 音效播放 |
+
+## 内容配置（JSON）
+
+成就定义和肠道日报内容统一管理在 `assets/data/app_content.json` 文件中，
+编辑此 JSON 文件即可新增/修改成就和日报内容，无需修改代码。
+
+```json
+{
+  "achievements": [
+    { "id": "first_big", "name": "初出茅庐", "icon": "🏁", "category": "milestone", "difficulty": "easy" }
+  ],
+  "daily_tips": [
+    { "condition": "no_record", "text": "肠道日报：今日尚未出库，多喝水有助排便。" },
+    { "condition": "default", "text": "肠道日报：保持每日规律如厕习惯，有助于肠道健康。" }
+  ]
+}
+```
+
+新增成就条目后，需在 `lib/services/achievement_service.dart` 中添加对应的检测逻辑。
 
 ## 快速开始
 

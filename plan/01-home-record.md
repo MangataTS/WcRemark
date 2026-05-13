@@ -28,7 +28,7 @@
   - 但 `home_page.dart` 中的 `.then((_) => _loadData())` 忽略了返回值
   - 需要接收返回值并调用 `DatabaseService.insertRecord()`
 - [ ] 本周概览卡片"状态: 良好"为硬编码，应接入 `HealthGradeCalculator`
-- [ ] 肠道日报小贴士为硬编码，应接入 `AnomalyDetector` 或动态提示
+- [x] 肠道日报小贴士已从 `assets/data/app_content.json` 动态加载
 - [ ] 快速详情面板（QuickDetail）未实现（文档规约：小号记录后可选弹QuickDetail）
 - [ ] 自定义记录类型未实现
 - [ ] 记录保存后触发积分计算流程未串联

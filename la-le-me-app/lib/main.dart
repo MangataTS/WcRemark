@@ -16,6 +16,7 @@ import 'screens/timeline_page.dart';
 import 'screens/lock_screen.dart';
 import 'services/theme_service.dart';
 import 'services/security_service.dart';
+import 'services/app_content_loader.dart';
 import 'services/database_factory_stub.dart'
     if (dart.library.io) 'services/database_factory_io.dart'
     if (dart.library.html) 'services/database_factory_web.dart';
@@ -24,6 +25,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('zh_CN', null);
   await initDatabaseFactory();
+  await AppContentLoader.initialize();
   runApp(const ProviderScope(child: LaLeMeApp()));
 }
 
@@ -57,7 +59,8 @@ class _LaLeMeAppState extends ConsumerState<LaLeMeApp> {
         title: '拉了么',
         debugShowCheckedModeBanner: false,
         theme: ThemeService.getTheme(ThemeMode.light),
-        darkTheme: ThemeService.getTheme(ThemeMode.dark, useOledDark: settings.useOledDark),
+        darkTheme: ThemeService.getTheme(ThemeMode.dark,
+            useOledDark: settings.useOledDark),
         themeMode: settings.themeMode,
         initialRoute: '/',
         routes: {

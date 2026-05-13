@@ -1,0 +1,960 @@
+{
+  "achievements": [
+    {
+      "id": "first_big",
+      "name": "初出茅庐",
+      "description": "完成第一次大号记录",
+      "icon": "🏁",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_10",
+      "name": "渐入佳境",
+      "description": "累计完成10次大号记录",
+      "icon": "📝",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "first_50",
+      "name": "肠道常客",
+      "description": "累计完成50次大号记录",
+      "icon": "🎖️",
+      "category": "milestone",
+      "difficulty": "medium",
+      "target": 50
+    },
+    {
+      "id": "first_100",
+      "name": "百战老将",
+      "description": "累计完成100次大号记录",
+      "icon": "🏅",
+      "category": "milestone",
+      "difficulty": "hard",
+      "target": 100
+    },
+    {
+      "id": "first_365",
+      "name": "一年之约",
+      "description": "累计完成365次大号记录",
+      "icon": "🗓️",
+      "category": "milestone",
+      "difficulty": "epic",
+      "target": 365
+    },
+    {
+      "id": "morning_7",
+      "name": "晨便达人",
+      "description": "连续7天在6:00-9:00之间完成大号",
+      "icon": "🌅",
+      "category": "regular",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "morning_21",
+      "name": "日出而作",
+      "description": "累计21天在6:00-9:00之间完成大号",
+      "icon": "☀️",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 21
+    },
+    {
+      "id": "streak_7",
+      "name": "一周规律",
+      "description": "连续7天每天至少完成一次大号",
+      "icon": "📅",
+      "category": "regular",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "streak_30",
+      "name": "规律大师",
+      "description": "连续30天每天至少完成一次大号",
+      "icon": "🗓️",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 30
+    },
+    {
+      "id": "streak_100",
+      "name": "生物钟活化石",
+      "description": "连续100天每天至少完成一次大号",
+      "icon": "🏰",
+      "category": "regular",
+      "difficulty": "epic",
+      "target": 100
+    },
+    {
+      "id": "perfect_bristol",
+      "name": "黄金便便",
+      "description": "累计10次以上大号且70%以上为布里斯托3-4型",
+      "icon": "🥇",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 10
+    },
+    {
+      "id": "bristol_master",
+      "name": "便便百科全书",
+      "description": "集齐全部7种布里斯托分型记录",
+      "icon": "📚",
+      "category": "health",
+      "difficulty": "epic",
+      "target": 7
+    },
+    {
+      "id": "fiber_rich",
+      "name": "膳食纤维大使",
+      "description": "连续3天大号布里斯托分型为3-4型",
+      "icon": "🥬",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 3
+    },
+    {
+      "id": "health_a_7",
+      "name": "模范肠道",
+      "description": "连续7周健康评级为A级",
+      "icon": "💚",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 7
+    },
+    {
+      "id": "paid_pooper",
+      "name": "带薪拉屎",
+      "description": "累计完成10次带薪记录",
+      "icon": "💼",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "paid_king",
+      "name": "摸鱼之神",
+      "description": "累计完成50次带薪记录，总时长超过5小时",
+      "icon": "💰",
+      "category": "fun",
+      "difficulty": "hard",
+      "target": 50
+    },
+    {
+      "id": "speed_king",
+      "name": "闪电侠",
+      "description": "累计5次大号时长在1-3分钟之间",
+      "icon": "⚡",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 5
+    },
+    {
+      "id": "marathon",
+      "name": "持久战",
+      "description": "单次大号时长超过15分钟",
+      "icon": "🏃",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 900
+    },
+    {
+      "id": "week_warrior",
+      "name": "周末战士",
+      "description": "近30天周末记录数超过工作日记录数",
+      "icon": "🛋️",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 0
+    },
+    {
+      "id": "mood_recorder",
+      "name": "情绪管理师",
+      "description": "累计记录5种不同心情的大号",
+      "icon": "🎭",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 5
+    },
+    {
+      "id": "night_owl",
+      "name": "夜猫子",
+      "description": "累计在凌晨0:00-5:00完成3次大号",
+      "icon": "🦉",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 3
+    },
+    {
+      "id": "double_kill",
+      "name": "双杀",
+      "description": "同一天内完成大号和小号各一次",
+      "icon": "⚔️",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "score_500",
+      "name": "规律达人",
+      "description": "赛季积分达到500分",
+      "icon": "🌟",
+      "category": "score",
+      "difficulty": "medium",
+      "target": 500
+    },
+    {
+      "id": "score_2000",
+      "name": "肠道大师",
+      "description": "赛季积分达到2000分",
+      "icon": "💎",
+      "category": "score",
+      "difficulty": "hard",
+      "target": 2000
+    },
+    {
+      "id": "score_10000",
+      "name": "传奇所长",
+      "description": "赛季积分达到10000分",
+      "icon": "👑",
+      "category": "score",
+      "difficulty": "epic",
+      "target": 10000
+    },
+    {
+      "id": "first_500",
+      "name": "千肠百转",
+      "description": "累计完成500次大号记录",
+      "icon": "🌪️",
+      "category": "milestone",
+      "difficulty": "epic",
+      "target": 500
+    },
+    {
+      "id": "first_1000",
+      "name": "万里挑一",
+      "description": "累计完成1000次大号记录",
+      "icon": "🌍",
+      "category": "milestone",
+      "difficulty": "legendary",
+      "target": 1000
+    },
+    {
+      "id": "first_bristol",
+      "name": "分类学家",
+      "description": "第一次选择布里斯托分型",
+      "icon": "🔬",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_paid",
+      "name": "初尝甜头",
+      "description": "第一次记录带薪如厕",
+      "icon": "🍬",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_morning",
+      "name": "早起鸟",
+      "description": "第一次在6:00-9:00完成大号",
+      "icon": "🐦",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_weekend",
+      "name": "休息日",
+      "description": "第一次在周末完成记录",
+      "icon": "🎉",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_achievement",
+      "name": "开门红",
+      "description": "解锁第一个成就",
+      "icon": "🚪",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "first_share",
+      "name": "社交首秀",
+      "description": "第一次分享成就",
+      "icon": "📤",
+      "category": "milestone",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "streak_365",
+      "name": "全年无休",
+      "description": "连续365天每天至少完成一次大号",
+      "icon": "🎆",
+      "category": "regular",
+      "difficulty": "legendary",
+      "target": 365
+    },
+    {
+      "id": "same_time_7",
+      "name": "精准打卡",
+      "description": "连续7天在前后不超过10分钟的同一时段完成大号",
+      "icon": "⏱️",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 7
+    },
+    {
+      "id": "weekend_regular",
+      "name": "周末生物钟",
+      "description": "连续4个周末都在同一天同一时段完成大号",
+      "icon": "🎯",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 4
+    },
+    {
+      "id": "no_skip_30",
+      "name": "全勤奖",
+      "description": "连续30天没有任何一天遗漏大号记录",
+      "icon": "🏆",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 30
+    },
+    {
+      "id": "morning_streak_30",
+      "name": "晨光熹微",
+      "description": "连续30天在6:00-9:00完成大号",
+      "icon": "🌄",
+      "category": "regular",
+      "difficulty": "epic",
+      "target": 30
+    },
+    {
+      "id": "midnight_3",
+      "name": "午夜凶铃",
+      "description": "连续3天在0:00-3:00完成大号",
+      "icon": "🔔",
+      "category": "regular",
+      "difficulty": "hard",
+      "target": 3
+    },
+    {
+      "id": "lunch_7",
+      "name": "饭后百步走",
+      "description": "连续7天在12:00-14:00完成大号",
+      "icon": "🍚",
+      "category": "regular",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "evening_7",
+      "name": "日落而息",
+      "description": "连续7天在18:00-21:00完成大号",
+      "icon": "🌇",
+      "category": "regular",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "bristol_3_streak",
+      "name": "丝滑体验",
+      "description": "连续5次大号均为布里斯托3型",
+      "icon": "🍫",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 5
+    },
+    {
+      "id": "bristol_4_streak",
+      "name": "完美曲线",
+      "description": "连续5次大号均为布里斯托4型",
+      "icon": "🍌",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 5
+    },
+    {
+      "id": "no_constipation_30",
+      "name": "畅通无阻",
+      "description": "连续30天无便秘记录（无布里斯托1-2型）",
+      "icon": "🛣️",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 30
+    },
+    {
+      "id": "no_diarrhea_30",
+      "name": "固若金汤",
+      "description": "连续30天无腹泻记录（无布里斯托6-7型）",
+      "icon": "🧱",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 30
+    },
+    {
+      "id": "golden_30",
+      "name": "三十天黄金便便",
+      "description": "连续30天大号均为布里斯托3-4型",
+      "icon": "✨",
+      "category": "health",
+      "difficulty": "epic",
+      "target": 30
+    },
+    {
+      "id": "health_a_30",
+      "name": "肠道优等生",
+      "description": "连续30天健康评级为A级",
+      "icon": "🅰️",
+      "category": "health",
+      "difficulty": "epic",
+      "target": 30
+    },
+    {
+      "id": "duration_perfect",
+      "name": "黄金时长",
+      "description": "连续7次大号时长均在3-8分钟之间",
+      "icon": "⏳",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "smoothness_max",
+      "name": "一泻千里",
+      "description": "累计10次大号顺畅度评为5星",
+      "icon": "🌊",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 10
+    },
+    {
+      "id": "brown_only",
+      "name": "本色出演",
+      "description": "连续20次大号颜色均为棕色",
+      "icon": "🟤",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 20
+    },
+    {
+      "id": "comeback",
+      "name": "满血复活",
+      "description": "便秘3天后恢复正常（布里斯托3-4型）",
+      "icon": "💊",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 0
+    },
+    {
+      "id": "fiber_7",
+      "name": "蔬菜战士",
+      "description": "连续7天布里斯托分型为3-4型",
+      "icon": "🥦",
+      "category": "health",
+      "difficulty": "hard",
+      "target": 7
+    },
+    {
+      "id": "balanced",
+      "name": "中庸之道",
+      "description": "累计记录布里斯托3型和4型各20次",
+      "icon": "⚖️",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 20
+    },
+    {
+      "id": "hydration",
+      "name": "水做的肠子",
+      "description": "连续7天大号顺畅度4星以上",
+      "icon": "💧",
+      "category": "health",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "paid_100",
+      "name": "厕所哲学家",
+      "description": "累计带薪如厕100次，在厕所思考人生",
+      "icon": "🧠",
+      "category": "fun",
+      "difficulty": "epic",
+      "target": 100
+    },
+    {
+      "id": "paid_1h",
+      "name": "摸鱼天花板",
+      "description": "单次带薪如厕时长超过1小时",
+      "icon": "🐟",
+      "category": "fun",
+      "difficulty": "hard",
+      "target": 3600
+    },
+    {
+      "id": "speed_10",
+      "name": "闪电五连鞭",
+      "description": "累计10次大号时长在1分钟以内",
+      "icon": "⚡",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 10
+    },
+    {
+      "id": "speed_1s",
+      "name": "瞬狱影杀阵",
+      "description": "单次大号时长在10秒以内",
+      "icon": "👻",
+      "category": "fun",
+      "difficulty": "hard",
+      "target": 10
+    },
+    {
+      "id": "marathon_30",
+      "name": "蹲到腿麻",
+      "description": "累计30次大号时长超过15分钟",
+      "icon": "🦵",
+      "category": "fun",
+      "difficulty": "hard",
+      "target": 30
+    },
+    {
+      "id": "marathon_1h",
+      "name": "厕所战神",
+      "description": "单次大号时长超过1小时",
+      "icon": "🎮",
+      "category": "fun",
+      "difficulty": "epic",
+      "target": 3600
+    },
+    {
+      "id": "phone_addict",
+      "name": "电子榨菜",
+      "description": "累计20次大号时备注提到在刷手机",
+      "icon": "📱",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 20
+    },
+    {
+      "id": "reader",
+      "name": "厕所诗人",
+      "description": "累计10次大号时备注提到在看书",
+      "icon": "📚",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "thinker",
+      "name": "马桶上的苏格拉底",
+      "description": "累计5次大号备注写了自己的思考",
+      "icon": "🤔",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 5
+    },
+    {
+      "id": "gamer",
+      "name": "蹲坑开黑",
+      "description": "累计5次大号备注提到在打游戏",
+      "icon": "🎮",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 5
+    },
+    {
+      "id": "holiday_pooper",
+      "name": "特种兵式拉屎",
+      "description": "国庆/春节期间连续7天完成大号",
+      "icon": "🚩",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 7
+    },
+    {
+      "id": "traveler",
+      "name": "Citywalk也要拉",
+      "description": "在3个不同城市完成大号记录",
+      "icon": "🗺️",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 3
+    },
+    {
+      "id": "home_king",
+      "name": "金窝银窝不如自己的厕所",
+      "description": "累计100次大号在家中完成",
+      "icon": "🏠",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 100
+    },
+    {
+      "id": "office_vip",
+      "name": "公司厕所VIP",
+      "description": "累计50次大号在公司完成",
+      "icon": "🏢",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 50
+    },
+    {
+      "id": "mall_hunter",
+      "name": "商场厕所猎人",
+      "description": "在5个不同商场完成大号",
+      "icon": "🏬",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 5
+    },
+    {
+      "id": "gas_station",
+      "name": "高速救星",
+      "description": "第一次在服务区厕所完成大号",
+      "icon": "⛽",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "birthday_pooper",
+      "name": "生日特权",
+      "description": "在生日当天完成大号",
+      "icon": "🎂",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "new_year",
+      "name": "新年第一拉",
+      "description": "在元旦当天完成大号",
+      "icon": "🎆",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "mood_happy",
+      "name": "尊嘟很爽",
+      "description": "累计10次大号心情选择开心",
+      "icon": "😄",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "mood_sad",
+      "name": "已老实",
+      "description": "累计10次大号心情选择痛苦",
+      "icon": "😣",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "mood_calm",
+      "name": "松弛感",
+      "description": "累计10次大号心情选择平静",
+      "icon": "😌",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "mood_angry",
+      "name": "班味太重",
+      "description": "累计10次大号心情选择烦躁",
+      "icon": "😤",
+      "category": "fun",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "all_moods",
+      "name": "情绪万花筒",
+      "description": "累计使用8种不同心情标签",
+      "icon": "🌈",
+      "category": "fun",
+      "difficulty": "medium",
+      "target": 8
+    },
+    {
+      "id": "first_friend",
+      "name": "臭味相投",
+      "description": "添加第一个好友",
+      "icon": "🤝",
+      "category": "social",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "friend_10",
+      "name": "肠道朋友圈",
+      "description": "累计添加10个好友",
+      "icon": "👥",
+      "category": "social",
+      "difficulty": "medium",
+      "target": 10
+    },
+    {
+      "id": "surpass_1",
+      "name": "偷偷超越",
+      "description": "在好友榜中超越1个好友",
+      "icon": "🚀",
+      "category": "social",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "surpass_10",
+      "name": "遥遥领先",
+      "description": "在好友榜中累计超越10个好友",
+      "icon": "📈",
+      "category": "social",
+      "difficulty": "medium",
+      "target": 10
+    },
+    {
+      "id": "top_3_global",
+      "name": "榜上有名",
+      "description": "进入全球排行榜前3名",
+      "icon": "🥉",
+      "category": "social",
+      "difficulty": "epic",
+      "target": 0
+    },
+    {
+      "id": "top_1_city",
+      "name": "一城之主",
+      "description": "进入同城排行榜第1名",
+      "icon": "🏙️",
+      "category": "social",
+      "difficulty": "epic",
+      "target": 0
+    },
+    {
+      "id": "share_1",
+      "name": "显眼包",
+      "description": "第一次分享成就到社交平台",
+      "icon": "📢",
+      "category": "social",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "share_10",
+      "name": "社交悍匪",
+      "description": "累计分享10次成就",
+      "icon": "🔊",
+      "category": "social",
+      "difficulty": "medium",
+      "target": 10
+    },
+    {
+      "id": "invite_3",
+      "name": "拉人入坑",
+      "description": "成功邀请3位好友注册",
+      "icon": "🎣",
+      "category": "social",
+      "difficulty": "medium",
+      "target": 3
+    },
+    {
+      "id": "rival",
+      "name": "宿敌",
+      "description": "与同一好友互相超越对方3次",
+      "icon": "⚔️",
+      "category": "social",
+      "difficulty": "hard",
+      "target": 3
+    },
+    {
+      "id": "color_all",
+      "name": "七色便便",
+      "description": "集齐所有颜色记录（棕/黑/红/其他）",
+      "icon": "🎨",
+      "category": "collector",
+      "difficulty": "hard",
+      "target": 0
+    },
+    {
+      "id": "duration_all",
+      "name": "时间管理大师",
+      "description": "累计记录所有时长区间（<1分/1-3/3-8/8-15/>15）",
+      "icon": "⏰",
+      "category": "collector",
+      "difficulty": "medium",
+      "target": 0
+    },
+    {
+      "id": "location_5",
+      "name": "厕所收藏家",
+      "description": "在5种不同地点类型完成大号（家/公司/商场/户外/其他）",
+      "icon": "📍",
+      "category": "collector",
+      "difficulty": "medium",
+      "target": 5
+    },
+    {
+      "id": "location_10",
+      "name": "厕所探险家",
+      "description": "在10种不同地点完成大号",
+      "icon": "🧭",
+      "category": "collector",
+      "difficulty": "hard",
+      "target": 10
+    },
+    {
+      "id": "weekday_all",
+      "name": "一周全勤",
+      "description": "在周一至周日都完成过大号",
+      "icon": "📆",
+      "category": "collector",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "month_all",
+      "name": "月月红",
+      "description": "在1-12月都完成过大号记录",
+      "icon": "🌙",
+      "category": "collector",
+      "difficulty": "medium",
+      "target": 0
+    },
+    {
+      "id": "hour_all",
+      "name": "二十四时辰",
+      "description": "在一天24个不同小时都完成过记录",
+      "icon": "🕐",
+      "category": "collector",
+      "difficulty": "epic",
+      "target": 0
+    },
+    {
+      "id": "achievement_10",
+      "name": "成就猎人",
+      "description": "累计解锁10个成就",
+      "icon": "🎯",
+      "category": "collector",
+      "difficulty": "easy",
+      "target": 10
+    },
+    {
+      "id": "achievement_50",
+      "name": "成就狂魔",
+      "description": "累计解锁50个成就",
+      "icon": "🏆",
+      "category": "collector",
+      "difficulty": "hard",
+      "target": 50
+    },
+    {
+      "id": "achievement_all",
+      "name": "全成就达成",
+      "description": "解锁所有成就",
+      "icon": "👑",
+      "category": "collector",
+      "difficulty": "legendary",
+      "target": 0
+    },
+    {
+      "id": "rainy_day",
+      "name": "雨一直下",
+      "description": "在雨天完成大号",
+      "icon": "🌧️",
+      "category": "special",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "sunny_day",
+      "name": "阳光正好",
+      "description": "在晴天完成大号",
+      "icon": "☀️",
+      "category": "special",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "full_moon",
+      "name": "月圆之夜",
+      "description": "在农历十五完成大号",
+      "icon": "🌕",
+      "category": "special",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "friday_13",
+      "name": "黑色星期五",
+      "description": "在13号星期五完成大号",
+      "icon": "🖤",
+      "category": "special",
+      "difficulty": "easy",
+      "target": 0
+    },
+    {
+      "id": "leap_day",
+      "name": "四年一遇",
+      "description": "在2月29日完成大号",
+      "icon": "🐸",
+      "category": "special",
+      "difficulty": "easy",
+      "target": 0
+    }
+  ],
+  "daily_tips": [
+    {
+      "condition": "no_record",
+      "text": "肠道日报：今日尚未出库，多喝水有助排便。"
+    },
+    {
+      "condition": "regularity_high",
+      "text": "肠道日报：规律指数优秀，继续保持！"
+    },
+    {
+      "condition": "regularity_medium",
+      "text": "肠道日报：规律指数尚可，注意固定时间如厕。"
+    },
+    {
+      "condition": "constipation_risk",
+      "text": "肠道日报：已经超过2天未出库，建议增加膳食纤维摄入。"
+    },
+    {
+      "condition": "paid_streak",
+      "text": "肠道日报：连续带薪如厕，这波不亏！"
+    },
+    {
+      "condition": "morning_streak",
+      "text": "肠道日报：晨便习惯养成中，身体正在感谢你。"
+    },
+    {
+      "condition": "weekend_warrior",
+      "text": "肠道日报：周末肠道依然活跃，松弛感拉满。"
+    },
+    {
+      "condition": "health_a",
+      "text": "肠道日报：本周健康评级A级，肠道状态遥遥领先。"
+    },
+    {
+      "condition": "default",
+      "text": "肠道日报：保持每日规律如厕习惯，有助于肠道健康。"
+    }
+  ]
+}

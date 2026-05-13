@@ -21,7 +21,8 @@ class WeeklyStatsPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Text('暂无数据', style: TextStyle(color: Colors.grey[600])),
               const SizedBox(height: 8),
-              Text('记录如厕数据后即可查看周报', style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+              Text('记录如厕数据后即可查看周报',
+                  style: TextStyle(color: Colors.grey[400], fontSize: 13)),
             ],
           ),
         ),
@@ -56,13 +57,19 @@ class WeeklyStatsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          const Text('本周规律指数', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('本周规律指数',
+              style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 8),
           Text('${stats.regularityScore}',
-              style: const TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.bold)),
-          const Text('分', style: TextStyle(color: Colors.white70, fontSize: 14)),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold)),
+          const Text('分',
+              style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 4),
-          Text('${stats.healthTitle} 🎉', style: const TextStyle(color: Colors.white, fontSize: 16)),
+          Text('${stats.healthTitle} 🎉',
+              style: const TextStyle(color: Colors.white, fontSize: 16)),
         ],
       ),
     );
@@ -78,7 +85,8 @@ class WeeklyStatsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('7日趋势', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text('7日趋势',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -89,18 +97,26 @@ class WeeklyStatsPage extends ConsumerWidget {
                 return Column(
                   children: [
                     Text('${counts[i]}',
-                        style: TextStyle(fontSize: 10, color: hasData ? const Color(0xFF795548) : const Color(0xFF999999))),
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: hasData
+                                ? const Color(0xFF795548)
+                                : const Color(0xFF999999))),
                     const SizedBox(height: 2),
                     Container(
                       width: 28,
                       height: height,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: hasData ? const Color(0xFFD4A574) : const Color(0xFFE0E0E0),
+                        color: hasData
+                            ? const Color(0xFFD4A574)
+                            : const Color(0xFFE0E0E0),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('周${days[i]}', style: const TextStyle(fontSize: 10, color: Color(0xFF999999))),
+                    Text('周${days[i]}',
+                        style: const TextStyle(
+                            fontSize: 10, color: Color(0xFF999999))),
                   ],
                 );
               }),
@@ -119,9 +135,11 @@ class WeeklyStatsPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Text('布里斯托分型分布', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text('布里斯托分型分布',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               SizedBox(height: 12),
-              Text('暂无布里斯托数据', style: TextStyle(color: Color(0xFF999999), fontSize: 14)),
+              Text('暂无布里斯托数据',
+                  style: TextStyle(color: Color(0xFF999999), fontSize: 14)),
             ],
           ),
         ),
@@ -158,11 +176,16 @@ class WeeklyStatsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('布里斯托分型分布', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text('布里斯托分型分布',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             ...sortedEntries.map((e) {
               final pct = totalBr > 0 ? e.value / totalBr : 0.0;
-              return _buildBristolRow(e.key, bristolLabels[e.key] ?? '${e.key}型', pct, colors[e.key] ?? Colors.brown);
+              return _buildBristolRow(
+                  e.key,
+                  bristolLabels[e.key] ?? '${e.key}型',
+                  pct,
+                  colors[e.key] ?? Colors.brown);
             }),
           ],
         ),
@@ -170,7 +193,8 @@ class WeeklyStatsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBristolRow(int type, String label, double percentage, Color color) {
+  Widget _buildBristolRow(
+      int type, String label, double percentage, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -188,7 +212,9 @@ class WeeklyStatsPage extends ConsumerWidget {
           ),
           SizedBox(
             width: 40,
-            child: Text('${(percentage * 100).toInt()}%', style: const TextStyle(fontSize: 12, color: Color(0xFF999999)), textAlign: TextAlign.right),
+            child: Text('${(percentage * 100).toInt()}%',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF999999)),
+                textAlign: TextAlign.right),
           ),
         ],
       ),
@@ -196,8 +222,11 @@ class WeeklyStatsPage extends ConsumerWidget {
   }
 
   Widget _buildStatsCards(WeeklyStatsData stats) {
-    final avgDuration = stats.avgBigDuration > 0 ? stats.avgBigDuration.toStringAsFixed(1) : '--';
-    final bigPct = stats.totalCount > 0 ? (stats.bigRatio * 100).toInt().toString() : '--';
+    final avgDuration = stats.avgBigDuration > 0
+        ? stats.avgBigDuration.toStringAsFixed(1)
+        : '--';
+    final bigPct =
+        stats.totalCount > 0 ? (stats.bigRatio * 100).toInt().toString() : '--';
 
     return SizedBox(
       height: 120,
@@ -226,18 +255,26 @@ class WeeklyStatsPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
+          Text(title,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
-              Text(unit, style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1A1A))),
+              Text(unit,
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xFF999999))),
             ],
           ),
           if (delta.isNotEmpty)
-            Text(delta, style: const TextStyle(fontSize: 11, color: Colors.green)),
+            Text(delta,
+                style: const TextStyle(fontSize: 11, color: Colors.green)),
         ],
       ),
     );
@@ -263,7 +300,8 @@ class MonthlyStatsPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Text('暂无数据', style: TextStyle(color: Colors.grey[600])),
               const SizedBox(height: 8),
-              Text('持续记录即可查看月报', style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+              Text('持续记录即可查看月报',
+                  style: TextStyle(color: Colors.grey[400], fontSize: 13)),
             ],
           ),
         ),
@@ -287,7 +325,12 @@ class MonthlyStatsPage extends ConsumerWidget {
   }
 
   Widget _buildGradeCard(MonthlyStatsData stats) {
-    final gradeColors = {'A': const Color(0xFF4CAF50), 'B': const Color(0xFF2196F3), 'C': const Color(0xFFFF9800), 'D': const Color(0xFFF44336)};
+    final gradeColors = {
+      'A': const Color(0xFF4CAF50),
+      'B': const Color(0xFF2196F3),
+      'C': const Color(0xFFFF9800),
+      'D': const Color(0xFFF44336)
+    };
     final gradeColor = gradeColors[stats.healthGrade] ?? Colors.grey;
 
     return Container(
@@ -301,10 +344,14 @@ class MonthlyStatsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          const Text('月度健康评级', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('月度健康评级',
+              style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 12),
           Text(stats.healthGrade,
-              style: const TextStyle(color: Colors.white, fontSize: 64, fontWeight: FontWeight.bold)),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 64,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(stats.healthTitle,
               style: const TextStyle(color: Colors.white, fontSize: 18)),
@@ -326,8 +373,13 @@ class MonthlyStatsPage extends ConsumerWidget {
   Widget _buildGradeScore(String label, int score) {
     return Column(
       children: [
-        Text('$score', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+        Text('$score',
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(color: Colors.white70, fontSize: 11)),
       ],
     );
   }
@@ -343,19 +395,29 @@ class MonthlyStatsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${now.month}月出库日历', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            Text('${now.month}月出库日历',
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['一', '二', '三', '四', '五', '六', '日'].map((d) =>
-                SizedBox(width: 36, child: Center(child: Text(d, style: const TextStyle(fontSize: 11, color: Color(0xFF999999))))),
-              ).toList(),
+              children: ['一', '二', '三', '四', '五', '六', '日']
+                  .map(
+                    (d) => SizedBox(
+                        width: 36,
+                        child: Center(
+                            child: Text(d,
+                                style: const TextStyle(
+                                    fontSize: 11, color: Color(0xFF999999))))),
+                  )
+                  .toList(),
             ),
             const SizedBox(height: 4),
             Wrap(
               spacing: 0,
               runSpacing: 2,
-              children: List.generate(firstWeekday - 1, (_) => const SizedBox(width: 36, height: 36))
+              children: List.generate(firstWeekday - 1,
+                  (_) => const SizedBox(width: 36, height: 36))
                 ..addAll(List.generate(daysInMonth, (i) {
                   final day = i + 1;
                   final count = stats.dailyBigCounts[day] ?? 0;
@@ -363,25 +425,33 @@ class MonthlyStatsPage extends ConsumerWidget {
                     width: 36,
                     height: 36,
                     child: Center(
-                      child: Container(
-                        width: count > 0 ? 28 : 20,
-                        height: count > 0 ? 28 : 20,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(count > 0 ? 8 : 10),
-                          color: count > 0
-                            ? Color(0xFFD4A574).withValues(alpha: count > 2 ? 1.0 : count / 2.0 * 0.8 + 0.2)
-                            : const Color(0xFFF0F0F0),
-                        ),
-                        child: Center(
-                          child: Text('$day',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: count > 0 ? Colors.white : const Color(0xFF999999),
-                              fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
+                      child: count > 0
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('💩',
+                                    style: TextStyle(fontSize: 15)),
+                                Text('$day',
+                                    style: const TextStyle(
+                                        fontSize: 9,
+                                        color: Color(0xFF795548),
+                                        fontWeight: FontWeight.w600)),
+                              ],
+                            )
+                          : Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFFF0F0F0),
+                              ),
+                              child: Center(
+                                child: Text('$day',
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFF999999))),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ),
                   );
                 })),
@@ -403,16 +473,21 @@ class MonthlyStatsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('时段分布', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text('时段分布',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             ...stats.periodDist.entries.map((e) {
-              final maxVal = stats.periodDist.values.reduce((a, b) => a > b ? a : b);
+              final maxVal =
+                  stats.periodDist.values.reduce((a, b) => a > b ? a : b);
               final pct = maxVal > 0 ? e.value / maxVal : 0.0;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Row(
                   children: [
-                    SizedBox(width: 40, child: Text('${e.key}时', style: const TextStyle(fontSize: 12))),
+                    SizedBox(
+                        width: 40,
+                        child: Text('${e.key}时',
+                            style: const TextStyle(fontSize: 12))),
                     Expanded(
                       child: LinearProgressIndicator(
                         value: pct,
@@ -420,7 +495,12 @@ class MonthlyStatsPage extends ConsumerWidget {
                         color: const Color(0xFFD4A574),
                       ),
                     ),
-                    SizedBox(width: 30, child: Text('${e.value}', style: const TextStyle(fontSize: 12, color: Color(0xFF999999)), textAlign: TextAlign.right)),
+                    SizedBox(
+                        width: 30,
+                        child: Text('${e.value}',
+                            style: const TextStyle(
+                                fontSize: 12, color: Color(0xFF999999)),
+                            textAlign: TextAlign.right)),
                   ],
                 ),
               );
@@ -438,7 +518,13 @@ class MonthlyStatsPage extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(child: _buildSummaryItem('小号', '${stats.totalSmall}', '次')),
         const SizedBox(width: 12),
-        Expanded(child: _buildSummaryItem('均时长', stats.avgBigDuration > 0 ? stats.avgBigDuration.toStringAsFixed(1) : '--', '分钟')),
+        Expanded(
+            child: _buildSummaryItem(
+                '均时长',
+                stats.avgBigDuration > 0
+                    ? stats.avgBigDuration.toStringAsFixed(1)
+                    : '--',
+                '分钟')),
       ],
     );
   }
@@ -452,15 +538,20 @@ class MonthlyStatsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
+          Text(label,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text(unit, style: const TextStyle(fontSize: 11, color: Color(0xFF999999))),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(unit,
+                  style:
+                      const TextStyle(fontSize: 11, color: Color(0xFF999999))),
             ],
           ),
         ],
@@ -488,7 +579,8 @@ class YearlyStatsPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Text('暂无数据', style: TextStyle(color: Colors.grey[600])),
               const SizedBox(height: 8),
-              Text('积累更多数据后即可查看年报', style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+              Text('积累更多数据后即可查看年报',
+                  style: TextStyle(color: Colors.grey[400], fontSize: 13)),
             ],
           ),
         ),
@@ -521,20 +613,28 @@ class YearlyStatsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          const Text('年度关键词', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('年度关键词',
+              style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             alignment: WrapAlignment.center,
-            children: stats.keywords.map((k) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.white.withValues(alpha: 0.2),
-              ),
-              child: Text(k, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
-            )).toList(),
+            children: stats.keywords
+                .map((k) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
+                      child: Text(k,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -542,8 +642,23 @@ class YearlyStatsPage extends ConsumerWidget {
   }
 
   Widget _buildMonthlyChart(YearlyStatsData stats) {
-    final maxCount = stats.monthlyBigCounts.values.fold(0, (a, b) => a > b ? a : b).clamp(1, 999);
-    final months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    final maxCount = stats.monthlyBigCounts.values
+        .fold(0, (a, b) => a > b ? a : b)
+        .clamp(1, 999);
+    final months = [
+      '1月',
+      '2月',
+      '3月',
+      '4月',
+      '5月',
+      '6月',
+      '7月',
+      '8月',
+      '9月',
+      '10月',
+      '11月',
+      '12月'
+    ];
 
     return Card(
       child: Padding(
@@ -551,7 +666,8 @@ class YearlyStatsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('月度出库趋势', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text('月度出库趋势',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             SizedBox(
               height: 200,
@@ -560,23 +676,31 @@ class YearlyStatsPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(12, (i) {
                   final count = stats.monthlyBigCounts[i + 1] ?? 0;
-                  final height = maxCount > 0 ? (count / maxCount * 160).clamp(4.0, 160.0) : 4.0;
+                  final height = maxCount > 0
+                      ? (count / maxCount * 160).clamp(4.0, 160.0)
+                      : 4.0;
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       if (count > 0)
-                        Text('$count', style: const TextStyle(fontSize: 9, color: Color(0xFF795548))),
+                        Text('$count',
+                            style: const TextStyle(
+                                fontSize: 9, color: Color(0xFF795548))),
                       const SizedBox(height: 2),
                       Container(
                         width: 20,
                         height: height,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(3),
-                          color: count > 0 ? const Color(0xFFD4A574) : const Color(0xFFE0E0E0),
+                          color: count > 0
+                              ? const Color(0xFFD4A574)
+                              : const Color(0xFFE0E0E0),
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Text(months[i], style: const TextStyle(fontSize: 8, color: Color(0xFF999999))),
+                      Text(months[i],
+                          style: const TextStyle(
+                              fontSize: 8, color: Color(0xFF999999))),
                     ],
                   );
                 }),
@@ -595,7 +719,9 @@ class YearlyStatsPage extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(child: _buildSummaryItem('大号', '${stats.totalBig}', '次')),
         const SizedBox(width: 12),
-        Expanded(child: _buildSummaryItem('带薪赚', '¥${stats.paidEarnings.toStringAsFixed(0)}', '')),
+        Expanded(
+            child: _buildSummaryItem(
+                '带薪赚', '¥${stats.paidEarnings.toStringAsFixed(0)}', '')),
       ],
     );
   }
@@ -609,15 +735,21 @@ class YearlyStatsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
+          Text(label,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF999999))),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              if (unit.isNotEmpty) Text(unit, style: const TextStyle(fontSize: 11, color: Color(0xFF999999))),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              if (unit.isNotEmpty)
+                Text(unit,
+                    style: const TextStyle(
+                        fontSize: 11, color: Color(0xFF999999))),
             ],
           ),
         ],

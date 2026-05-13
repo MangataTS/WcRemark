@@ -1,6 +1,8 @@
 import '../models/toilet_record.dart';
 import 'database_service.dart';
 import 'notification_service.dart';
+import 'sound_service.dart';
+import 'settings_service.dart';
 
 class AnomalyDetector {
   static const int _constipationDays = 5;
@@ -14,9 +16,14 @@ class AnomalyDetector {
       final allRecords = await DatabaseService.getRecords();
       final recentRecords = await DatabaseService.getRecentRecords(days: 7);
 
-      await _checkConstipation(allRecords);
-      await _checkDiarrhea(recentRecords);
-      await _checkBloodInStool(allRecords);
+      final hasConstipation = await _checkConstipation(allRecords);
+      final hasDiarrhea = await _checkDiarrhea(recentRecords);
+      final hasBlood = await _checkBloodInStool(allRecords);
+
+      if (hasConstipation || hasDiarrhea || hasBlood) {
+        final settings = await AppSettings.load();
+        await SoundService.playWaterDrop(settings);
+      }
     } catch (_) {}
   }
 
@@ -24,16 +31,18 @@ class AnomalyDetector {
     final bigRecords = records.where((r) => r.type == RecordType.big).toList();
     if (bigRecords.isEmpty) return false;
 
-    final lastBig = bigRecords.reduce((a, b) =>
-      a.timestamp > b.timestamp ? a : b
-    );
-    final daysSince = DateTime.now().difference(
-      DateTime.fromMillisecondsSinceEpoch(lastBig.timestamp),
-    ).inDays;
+    final lastBig =
+        bigRecords.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+    final daysSince = DateTime.now()
+        .difference(
+          DateTime.fromMillisecondsSinceEpoch(lastBig.timestamp),
+        )
+        .inDays;
 
     if (daysSince >= _constipationDays) {
       await NotificationService.show(
-        title: NotificationType.getLocalizedTitle(NotificationType.constipationAlert),
+        title: NotificationType.getLocalizedTitle(
+            NotificationType.constipationAlert),
         body: '已经 $daysSince 天没有大号了，建议多吃膳食纤维，必要时就医。',
         payload: NotificationType.constipationAlert,
       );
@@ -54,13 +63,18 @@ class AnomalyDetector {
       final day = now.subtract(Duration(days: i));
       final dayRecords = recentRecords.where((r) {
         final dt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
-        return dt.year == day.year && dt.month == day.month && dt.day == day.day;
+        return dt.year == day.year &&
+            dt.month == day.month &&
+            dt.day == day.day;
       }).toList();
 
-      final bigRecords = dayRecords.where((r) => r.type == RecordType.big).toList();
-      final diarrheaCount = bigRecords.where((r) =>
-        r.bristolType != null && _diarrheaBristolTypes.contains(r.bristolType)
-      ).length;
+      final bigRecords =
+          dayRecords.where((r) => r.type == RecordType.big).toList();
+      final diarrheaCount = bigRecords
+          .where((r) =>
+              r.bristolType != null &&
+              _diarrheaBristolTypes.contains(r.bristolType))
+          .length;
 
       if (diarrheaCount >= _diarrheaMinDailyCount) {
         consecutiveDays++;
@@ -76,7 +90,8 @@ class AnomalyDetector {
   static Future<bool> _checkDiarrhea(List<ToiletRecord> recentRecords) async {
     if (hasPersistentDiarrhea(recentRecords)) {
       await NotificationService.show(
-        title: NotificationType.getLocalizedTitle(NotificationType.diarrheaAlert),
+        title:
+            NotificationType.getLocalizedTitle(NotificationType.diarrheaAlert),
         body: NotificationType.getLocalizedBody(NotificationType.diarrheaAlert),
         payload: NotificationType.diarrheaAlert,
       );
@@ -92,8 +107,9 @@ class AnomalyDetector {
     }).toList();
 
     return recent.any((r) =>
-      r.type == RecordType.big && r.color != null && _alertColors.contains(r.color)
-    );
+        r.type == RecordType.big &&
+        r.color != null &&
+        _alertColors.contains(r.color));
   }
 
   static Future<bool> _checkBloodInStool(List<ToiletRecord> records) async {
@@ -116,14 +132,16 @@ class AnomalyDetector {
     final warnings = <String>[];
     final recommendations = <String>[];
 
-    final bigRecords = allRecords.where((r) => r.type == RecordType.big).toList();
+    final bigRecords =
+        allRecords.where((r) => r.type == RecordType.big).toList();
     if (bigRecords.isNotEmpty) {
-      final lastBig = bigRecords.reduce((a, b) =>
-        a.timestamp > b.timestamp ? a : b
-      );
-      final daysSince = DateTime.now().difference(
-        DateTime.fromMillisecondsSinceEpoch(lastBig.timestamp),
-      ).inDays;
+      final lastBig =
+          bigRecords.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+      final daysSince = DateTime.now()
+          .difference(
+            DateTime.fromMillisecondsSinceEpoch(lastBig.timestamp),
+          )
+          .inDays;
 
       if (daysSince >= _constipationDays) {
         anomalies.add('已 $daysSince 天无大号');
@@ -163,11 +181,14 @@ class AnomalyDetector {
   }
 
   static double? _calculateAvgBristol(List<ToiletRecord> records) {
-    final withBristol = records.where((r) =>
-      r.type == RecordType.big && r.bristolType != null
-    ).toList();
+    final withBristol = records
+        .where((r) => r.type == RecordType.big && r.bristolType != null)
+        .toList();
     if (withBristol.isEmpty) return null;
-    return withBristol.map((r) => r.bristolType!.toDouble()).reduce((a, b) => a + b) / withBristol.length;
+    return withBristol
+            .map((r) => r.bristolType!.toDouble())
+            .reduce((a, b) => a + b) /
+        withBristol.length;
   }
 }
 

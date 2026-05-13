@@ -30,11 +30,13 @@ final yearRecordsProvider = FutureProvider<List<ToiletRecord>>((ref) async {
 class FiveDayStats {
   final List<String> dates;
   final List<int> bigCounts;
+  final List<int> smallCounts;
   final List<int> totalCounts;
 
   FiveDayStats({
     required this.dates,
     required this.bigCounts,
+    required this.smallCounts,
     required this.totalCounts,
   });
 }
@@ -46,27 +48,32 @@ final fiveDayStatsProvider = FutureProvider<FiveDayStats>((ref) async {
 
   List<String> dates = [];
   List<int> bigCounts = [];
+  List<int> smallCounts = [];
   List<int> totalCounts = [];
 
   for (int i = 4; i >= 0; i--) {
     final day = now.subtract(Duration(days: i));
-    final dayKey = '${day.year}${day.month.toString().padLeft(2, '0')}${day.day.toString().padLeft(2, '0')}';
+    final dayKey =
+        '${day.year}${day.month.toString().padLeft(2, '0')}${day.day.toString().padLeft(2, '0')}';
     final monthDay = '${day.month}/${day.day}';
 
     final dayRecords = records.where((r) {
       final dt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
-      final rKey = '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
+      final rKey =
+          '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
       return rKey == dayKey;
     }).toList();
 
     dates.add(monthDay);
     bigCounts.add(dayRecords.where((r) => r.type == RecordType.big).length);
+    smallCounts.add(dayRecords.where((r) => r.type == RecordType.small).length);
     totalCounts.add(dayRecords.length);
   }
 
   return FiveDayStats(
     dates: dates,
     bigCounts: bigCounts,
+    smallCounts: smallCounts,
     totalCounts: totalCounts,
   );
 });
@@ -84,6 +91,11 @@ final todaySmallCountProvider = FutureProvider<int>((ref) async {
 final seasonScoreProvider = FutureProvider<SeasonInfo>((ref) async {
   ref.watch(refreshTriggerProvider);
   return await SeasonService.getSeasonInfo();
+});
+
+final totalRecordCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(refreshTriggerProvider);
+  return await DatabaseService.getTotalRecordCount();
 });
 
 class WeeklyStatsData {
@@ -112,7 +124,8 @@ class WeeklyStatsData {
   });
 
   int get totalCount => totalBig + totalSmall;
-  double get bigRatio => totalBig + totalSmall > 0 ? totalBig / (totalBig + totalSmall) : 0;
+  double get bigRatio =>
+      totalBig + totalSmall > 0 ? totalBig / (totalBig + totalSmall) : 0;
 }
 
 final weeklyStatsProvider = FutureProvider<WeeklyStatsData>((ref) async {
@@ -128,10 +141,12 @@ WeeklyStatsData _calculateWeeklyStats(List<ToiletRecord> records) {
   List<int> dailyBigCounts = List.filled(7, 0);
   for (int i = 0; i < 7; i++) {
     final day = now.subtract(Duration(days: 6 - i));
-    final dayKey = '${day.year}${day.month.toString().padLeft(2, '0')}${day.day.toString().padLeft(2, '0')}';
+    final dayKey =
+        '${day.year}${day.month.toString().padLeft(2, '0')}${day.day.toString().padLeft(2, '0')}';
     dailyBigCounts[i] = bigRecords.where((r) {
       final dt = DateTime.fromMillisecondsSinceEpoch(r.timestamp);
-      final rKey = '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
+      final rKey =
+          '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
       return rKey == dayKey;
     }).length;
   }
@@ -147,7 +162,10 @@ WeeklyStatsData _calculateWeeklyStats(List<ToiletRecord> records) {
 
   double avgDuration = 0;
   if (bigRecords.isNotEmpty) {
-    final durations = bigRecords.where((r) => r.duration != null).map((r) => r.duration! / 60.0).toList();
+    final durations = bigRecords
+        .where((r) => r.duration != null)
+        .map((r) => r.duration! / 60.0)
+        .toList();
     if (durations.isNotEmpty) {
       avgDuration = durations.reduce((a, b) => a + b) / durations.length;
     }
@@ -249,7 +267,10 @@ MonthlyStatsData _calculateMonthlyStats(List<ToiletRecord> records) {
 
   double avgDuration = 0;
   if (bigRecords.isNotEmpty) {
-    final durations = bigRecords.where((r) => r.duration != null).map((r) => r.duration! / 60.0).toList();
+    final durations = bigRecords
+        .where((r) => r.duration != null)
+        .map((r) => r.duration! / 60.0)
+        .toList();
     if (durations.isNotEmpty) {
       avgDuration = durations.reduce((a, b) => a + b) / durations.length;
     }
@@ -338,7 +359,10 @@ YearlyStatsData _calculateYearlyStats(List<ToiletRecord> records) {
 
   double avgDuration = 0;
   if (bigRecords.isNotEmpty) {
-    final durations = bigRecords.where((r) => r.duration != null).map((r) => r.duration! / 60.0).toList();
+    final durations = bigRecords
+        .where((r) => r.duration != null)
+        .map((r) => r.duration! / 60.0)
+        .toList();
     if (durations.isNotEmpty) {
       avgDuration = durations.reduce((a, b) => a + b) / durations.length;
     }
